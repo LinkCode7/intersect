@@ -16,7 +16,7 @@ int main()
 {
 	using namespace Sindy;
 	//TestPerformance::testAccuracy(SINDY_DB_PATH);
-	//TestPerformance::entry(SINDY_DB_PATH, SINDY_LOG_PATH);
+	TestPerformance::entry(SINDY_DB_PATH, SINDY_LOG_PATH);
 
 	DurationTime first = steady_clock::now().time_since_epoch();
 	DurationTime now = steady_clock::now().time_since_epoch();

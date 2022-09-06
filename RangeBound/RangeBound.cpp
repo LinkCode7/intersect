@@ -1,10 +1,5 @@
 #include "RangeBound.h"
 
-#include "..\Common\ConstDefine.h"
-
-
-
-
 
 
 namespace Sindy
@@ -42,7 +37,7 @@ namespace Sindy
 	RangeItem::~RangeItem()
 	{
 		if (m_isMin) // 统一在最小端释放
-			_Delete(m_pItems);
+			delete(m_pItems);
 	}
 
 	Range2d::~Range2d()
@@ -56,7 +51,7 @@ namespace Sindy
 		for (; iter != m_mapDouble2Item.end(); ++iter)
 		{
 			BoundItem* pItem = iter->second;
-			_Delete(pItem);
+			delete(pItem);
 		}
 
 		m_mapDouble2Item.clear();
@@ -79,11 +74,11 @@ namespace Sindy
 			}
 		}
 
-		BoundItem* pItem = _NewParm(BoundItem, (ipItem));
+		BoundItem* pItem = new BoundItem(ipItem);
 
 		if (!ipItem->GetExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
 		{
-			_Delete(pItem);
+			delete(pItem);
 			return false;
 		}
 
@@ -146,11 +141,11 @@ namespace Sindy
 			}
 		}
 
-		BoundItem* pItem = _NewParm(BoundItem, (ipItem));
+		BoundItem* pItem = new BoundItem(ipItem);
 
 		if (!ipItem->GetExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
 		{
-			_Delete(pItem);
+			delete(pItem);
 			return false;
 		}
 
@@ -215,13 +210,13 @@ namespace Sindy
 			}
 		}
 
-		RangeItem::Ranges* pRange = _New(RangeItem::Ranges);
+		RangeItem::Ranges* pRange = new(RangeItem::Ranges);
 
-		RangeItem* pMinItem = _NewParm(RangeItem, (ipItem, pRange, true, isSrc));
+		RangeItem* pMinItem = new RangeItem(ipItem, pRange, true, isSrc);
 		if (!ipItem->GetExtents(pMinItem->m_dMinX, pMinItem->m_dMinY, pMinItem->m_dMaxX, pMinItem->m_dMaxY))
 		{
-			_Delete(pMinItem);
-			_Delete(pRange);
+			delete(pMinItem);
+			delete(pRange);
 			return false;
 		}
 
@@ -233,7 +228,7 @@ namespace Sindy
 		m_mapDouble2Item.insert(std::make_pair(pMinItem->m_dMinX, pMinItem));
 
 
-		RangeItem* pMaxItem = _NewParm(RangeItem, (ipItem, pRange, false, isSrc));
+		RangeItem* pMaxItem = new RangeItem(ipItem, pRange, false, isSrc);
 		pMaxItem->m_dMinX = pMinItem->m_dMinX;
 		pMaxItem->m_dMinY = pMinItem->m_dMinY;
 		pMaxItem->m_dMaxX = pMinItem->m_dMaxX;

@@ -9,16 +9,27 @@
 #include <set>
 #include <string>
 
-
-#ifdef UNICODE
+//#define SINDY_UNICODE
+#ifdef SINDY_UNICODE
 using PString = std::wstring;
 #else
 using PString = std::string;
-#endif // UNICODE
+#endif
 
 #define ConverToMilliseconds(durationX) std::chrono::duration_cast<std::chrono::milliseconds>((durationX))
 
-#define SINDY_DB_PATH "E:\\Sindy\\intersect\\TestData.db"
-#define SINDY_LOG_PATH "E:\\Sindy\\intersect\\TestResult.log"
+
+#ifndef _T
+
+#ifdef SINDY_UNICODE
+#define _T(str) L#str
+#else
+#define _T(str) str
+#endif
+
+#endif
+
+#define SINDY_DB_PATH "E:\\Sindy\\intersect\\TestData.db3"
+#define SINDY_LOG_PATH _T("E:\\Sindy\\intersect\\TestResult.log")
 
 #endif

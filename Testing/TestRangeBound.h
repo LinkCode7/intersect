@@ -38,7 +38,7 @@ namespace TestPerformance
 		std::string m_strId;
 		Point3d m_ptBegin;
 		Point3d m_ptEnd;
-		double m_dBulge;
+		double m_dBulge = 0.0;
 
 		Extents m_extents;
 

@@ -12,7 +12,6 @@
 
 void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 {
-
 	using namespace Sindy;
 
 	std::vector<TestLineData*> vecLineData;
@@ -151,47 +150,40 @@ void TestPerformance::testRangeBound(const std::vector<TestLineData*>& vecLineDa
 
 void TestPerformance::unSerializePoints(const PString& strDbPath, std::vector<TestLineData*>& vecLineData)
 {
-	Sindy::RunTime time;
-
 	// TestData.Line
 	Sindy::SQLite database(strDbPath);
-	time.addTimePoint("Sindy::SQLite database(strDbPath);");
 
 	std::ostringstream oss;
 	oss << "select * from " << table_name;
 	std::string strSql = oss.str();
 
-	database.BeginTransaction();
-	database.Prepare(strSql);
+	database.beginTransaction();
+	database.prepare(strSql);
 
-	time.addTimePoint("Prepare");
-	while (SQLITE_ROW == database.Step())
+	while (SQLITE_ROW == database.step())
 	{
 		TestLineData* pLineData = new TestLineData;
-		database.GetValueText(handle, pLineData->m_strId);
+		database.getValueText(handle, pLineData->m_strId);
 
-		database.GetValueDouble(bulge, pLineData->m_dBulge);
-		database.GetValueDouble(from_x, pLineData->m_ptBegin.x);
-		database.GetValueDouble(from_y, pLineData->m_ptBegin.y);
-		database.GetValueDouble(to_x, pLineData->m_ptEnd.x);
-		database.GetValueDouble(to_y, pLineData->m_ptEnd.y);
+		database.getValueDouble(bulge, pLineData->m_dBulge);
+		database.getValueDouble(from_x, pLineData->m_ptBegin.x);
+		database.getValueDouble(from_y, pLineData->m_ptBegin.y);
+		database.getValueDouble(to_x, pLineData->m_ptEnd.x);
+		database.getValueDouble(to_y, pLineData->m_ptEnd.y);
 
 		double dMinX = 0.0;
-		database.GetValueDouble(min_x, dMinX);
+		database.getValueDouble(min_x, dMinX);
 		double dMinY = 0.0;
-		database.GetValueDouble(min_y, dMinY);
+		database.getValueDouble(min_y, dMinY);
 		double dMaxX = 0.0;
-		database.GetValueDouble(max_x, dMaxX);
+		database.getValueDouble(max_x, dMaxX);
 		double dMaxY = 0.0;
-		database.GetValueDouble(max_y, dMaxY);
+		database.getValueDouble(max_y, dMaxY);
 
-		auto offset = time.addTimePoint("for-read double");
 		pLineData->m_extents.reset(Point3d(dMinX, dMinY, 0.0), Point3d(dMaxX, dMaxY, 0.0));
 
 		vecLineData.push_back(pLineData);
 	}
-
-	time.write(SINDY_LOG_PATH, "读数据");
 }
 
 void TestPerformance::testAccuracy(const PString& strDbPath)
@@ -272,42 +264,42 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 	// 保存
 	{
 		Sindy::SQLite database(strDbPath);
-		database.BeginTransaction();
-		database.DropTable("result_range");
-		database.Execute("CREATE TABLE result_range(handle TEXT PRIMARY KEY,relation TEXT)");
+		database.beginTransaction();
+		database.dropTable("result_range");
+		database.execute("CREATE TABLE result_range(handle TEXT PRIMARY KEY,relation TEXT)");
 
-		database.Prepare("INSERT INTO result_range(handle,relation) VALUES(:1,:2)");
+		database.prepare("INSERT INTO result_range(handle,relation) VALUES(:1,:2)");
 		for (const auto& item : mapLine2Links1)
 		{
 			std::string str;
 			Sindy::joinStr(*(item.second), str);
 
-			database.BindText(":1", item.first);
-			database.BindText(":2", str);
-			database.Step();
-			database.ResetSyntax();
+			database.bindText(":1", item.first);
+			database.bindText(":2", str);
+			database.step();
+			database.resetSyntax();
 		}
-		database.Commit();
+		database.commit();
 	}
 
 	// for-for
 	{
 		int count = 0;
 		Sindy::SQLite database(strDbPath);
-		database.BeginTransaction();
-		database.DropTable("result_for");
-		database.Execute("CREATE TABLE result_for(handle TEXT PRIMARY KEY,relation TEXT)");
+		database.beginTransaction();
+		database.dropTable("result_for");
+		database.execute("CREATE TABLE result_for(handle TEXT PRIMARY KEY,relation TEXT)");
 
-		database.Prepare("INSERT INTO result_for(handle,relation) VALUES(:1,:2)");
+		database.prepare("INSERT INTO result_for(handle,relation) VALUES(:1,:2)");
 		for (const auto& item : mapLine2Links2)
 		{
 			std::string strFor;
 			Sindy::joinStr(*(item.second), strFor);
 
-			database.BindText(":1", item.first);
-			database.BindText(":2", strFor);
-			database.Step();
-			database.ResetSyntax();
+			database.bindText(":1", item.first);
+			database.bindText(":2", strFor);
+			database.step();
+			database.resetSyntax();
 
 			if (true)
 			{
@@ -329,7 +321,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 				}
 			}
 		}
-		database.Commit();
+		database.commit();
 		std::cout << count << "条记录不匹配" << std::endl;
 	}
 	Sindy::ReleaseMapValue(mapLine2Links1);
