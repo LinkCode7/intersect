@@ -30,3 +30,18 @@
 *.exe
 *.out
 *.app
+
+
+# Visual Studio
+*.vs
+*.db
+*.opendb
+*.sdf
+.vs
+
+*.user
+Debug
+Release
+ipch
+lib
+out
