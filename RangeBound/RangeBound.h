@@ -144,16 +144,12 @@ namespace Sindy
 		std::set<REGIONID> m_setCheck;
 	};
 
-
-
-
 	template<typename Array>
 	void SetRangeItems(Range2d& range, const Array& arr, bool isSrc, double dTol)
 	{
-		int iSize = PmAzTemplate::GetSize(arr);
-		for (int i = 0; i < iSize; ++i)
+		for (const auto& item : arr)
 		{
-			range.SetItems(arr.at(i), isSrc, dTol);
+			range.SetItems(item, isSrc, dTol);
 		}
 	}
 

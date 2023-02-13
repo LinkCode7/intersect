@@ -3,20 +3,13 @@ project(intersect)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB SRC
-       ${PROJECT_SOURCE_DIR}/*.cpp
-       ${PROJECT_SOURCE_DIR}/*.h
-       ${PROJECT_SOURCE_DIR}/Common/*.cpp
-       ${PROJECT_SOURCE_DIR}/Common/*.h
-       ${PROJECT_SOURCE_DIR}/RangeBound/*.cpp
-       ${PROJECT_SOURCE_DIR}/RangeBound/*.h
-       ${PROJECT_SOURCE_DIR}/SQLite/*.cpp
-       ${PROJECT_SOURCE_DIR}/SQLite/*.c
-       ${PROJECT_SOURCE_DIR}/SQLite/*.h
-       ${PROJECT_SOURCE_DIR}/Testing/*.cpp
-       ${PROJECT_SOURCE_DIR}/Testing/*.h)
+aux_source_directory(./ SRCS)
+aux_source_directory(./Common SRCS)
+aux_source_directory(./RangeBound SRCS)
+aux_source_directory(./SQLite SRCS)
+aux_source_directory(./Testing SRCS)
 
 #打印SRC中列表信息
-message(STATUS "SRC = ${SRC}")
+message(STATUS "SRC = ${SRCS}")
 
-add_executable(${PROJECT_NAME} ${SRC})
+add_executable(${PROJECT_NAME} ${SRCS})

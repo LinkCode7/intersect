@@ -1,7 +1,7 @@
 #include "./Testing/TestRangeBound.h"
 
 #include "SindyGlobal.h"
-#include "Common/RunTimeTest.h"
+#include "Common/SindyRunTime.h"
 
 #include <thread>
 #include <codecvt>

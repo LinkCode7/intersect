@@ -1,6 +1,8 @@
 #ifndef SINDY_GLOBAL_H
 #define SINDY_GLOBAL_H
 
+#define INCLUDE_SINDY_GLOBAL
+
 #define SINDY_API
 
 #include <iostream>

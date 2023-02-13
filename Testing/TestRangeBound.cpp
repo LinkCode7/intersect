@@ -1,8 +1,8 @@
 #include "TestRangeBound.h"
 
-#include "../SQLite/SQLiteUtility.h"
+#include "../SQLite/SindySQLite.h"
 
-#include "../Common/RunTimeTest.h"
+#include "../Common/SindyRunTime.h"
 #include "../Common/StringUtil.h"
 #include "../Common/template.h"
 #include <sstream>
