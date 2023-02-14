@@ -4,8 +4,8 @@
 ## 组成
 1. 算法核心在intersect/RangeBound/RangeBound.cpp中。
 2. 测试代码在intersect/Testing中，包含准确性测试、性能测试，测试结果会打印在TestResult.log中，如：
->对84834个实体求交 -> 算法1：暴力遍历 总计：121727ms
->对84834个实体求交 -> 算法2：外包排斥 总计：35315ms
+>对84834个实体求交 -> 算法1：暴力遍历 总计：121727ms<br>
+>对84834个实体求交 -> 算法2：外包排斥 总计：35315ms<br>
 >对84834个实体求交 -> 算法3：Range2d 总计：803ms
 
 3. 为了支持测试，项目中把84834个图形序列化了到TestData.db3中，intersect/SQLite/SindySQLite.cpp提供相应的读写函数。
