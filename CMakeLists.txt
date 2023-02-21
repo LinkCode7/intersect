@@ -12,4 +12,6 @@ aux_source_directory(./Testing SRCS)
 #打印SRC中列表信息
 message(STATUS "SRC = ${SRCS}")
 
+add_compile_definitions(THIS_PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+
 add_executable(${PROJECT_NAME} ${SRCS})

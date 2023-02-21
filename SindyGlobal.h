@@ -31,7 +31,6 @@ using PString = std::string;
 
 #endif
 
-#define SINDY_DB_PATH "E:\\Sindy\\intersect\\TestData.db3"
-#define SINDY_LOG_PATH _T("E:\\Sindy\\intersect\\TestResult.log")
+#define MAKE_SINDY_PATH(name) THIS_PROJECT_SOURCE_DIR##"//"##name
 
 #endif

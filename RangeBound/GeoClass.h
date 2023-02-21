@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #define DEFAULT_DOUBLE 0.0
 
 #ifdef _WIN64
@@ -22,17 +20,11 @@ typedef __w64 int           SindyInt;
 typedef __w64 unsigned int  SindyUInt;
 #endif
 
-
-
 #if PMVCCUR_VER < PMVC2005_VER
 typedef long REGIONID;
 #else
 typedef SindyInt REGIONID;
 #endif
-
-
-
-
 
 class Point3d
 {

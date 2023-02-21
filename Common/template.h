@@ -1,9 +1,5 @@
 #pragma once
 
-
-
-
-
 namespace Sindy
 {
 	// 释放STL容器，不关心容器的内部结构

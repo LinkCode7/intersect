@@ -1,7 +1,5 @@
 #include "RangeBound.h"
 
-
-
 namespace Sindy
 {
 	bool IBoundItem::GetId(REGIONID& id)
@@ -37,7 +35,7 @@ namespace Sindy
 	RangeItem::~RangeItem()
 	{
 		if (m_isMin) // 统一在最小端释放
-			delete(m_pItems);
+			delete m_pItems;
 	}
 
 	Range2d::~Range2d()
@@ -51,34 +49,20 @@ namespace Sindy
 		for (; iter != m_mapDouble2Item.end(); ++iter)
 		{
 			BoundItem* pItem = iter->second;
-			delete(pItem);
+			delete pItem;
 		}
 
 		m_mapDouble2Item.clear();
-
-		m_setCheck.clear();
 	}
 
-	bool Range2d::SetItemMin(IBoundItem* ipItem, double dTol, bool isNeedCheckRepeat)
+	bool Range2d::SetItemMin(IBoundItem* ipItem, double dTol)
 	{
 		if (!ipItem) return false;
 
-		// 请调用者保证Item唯一性
-		if (isNeedCheckRepeat)
-		{
-			REGIONID id = UNKNOWN_REGION_ID;
-			if (ipItem->GetId(id))
-			{
-				if (!m_setCheck.insert(id).second)
-					return false;
-			}
-		}
-
 		BoundItem* pItem = new BoundItem(ipItem);
-
 		if (!ipItem->GetExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
 		{
-			delete(pItem);
+			delete pItem;
 			return false;
 		}
 
@@ -89,7 +73,6 @@ namespace Sindy
 
 		// Min.X
 		m_mapDouble2Item.insert(std::make_pair(pItem->m_dMinX, pItem));
-
 		return true;
 	}
 
@@ -124,28 +107,15 @@ namespace Sindy
 		GetSameItem(Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, dTol);
 	}
 
-
-
-	bool Range2d::SetItemMax(IBoundItem* ipItem, double dTol, bool isNeedCheckRepeat)
+	bool Range2d::SetItemMax(IBoundItem* ipItem, double dTol)
 	{
 		if (!ipItem) return false;
-
-		// 请调用者保证Item唯一性
-		if (isNeedCheckRepeat)
-		{
-			REGIONID id = UNKNOWN_REGION_ID;
-			if (ipItem->GetId(id))
-			{
-				if (!m_setCheck.insert(id).second)
-					return false;
-			}
-		}
 
 		BoundItem* pItem = new BoundItem(ipItem);
 
 		if (!ipItem->GetExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
 		{
-			delete(pItem);
+			delete pItem;
 			return false;
 		}
 
@@ -189,34 +159,17 @@ namespace Sindy
 		GetIntersectItem(Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, dTol);
 	}
 
-
-
-
-
-
 	// 只输出源实体相关的Bound
-	bool Range2d::SetItems(IBoundItem* ipItem, bool isSrc, double dTol, bool isNeedCheckRepeat)
+	bool Range2d::SetItems(IBoundItem* ipItem, bool isSrc, double dTol)
 	{
 		if (!ipItem) return false;
 
-		// 请调用者保证Item唯一性
-		if (isNeedCheckRepeat)
-		{
-			REGIONID id = UNKNOWN_REGION_ID;
-			if (ipItem->GetId(id))
-			{
-				if (!m_setCheck.insert(id).second)
-					return false;
-			}
-		}
-
 		RangeItem::Ranges* pRange = new(RangeItem::Ranges);
-
 		RangeItem* pMinItem = new RangeItem(ipItem, pRange, true, isSrc);
 		if (!ipItem->GetExtents(pMinItem->m_dMinX, pMinItem->m_dMinY, pMinItem->m_dMaxX, pMinItem->m_dMaxY))
 		{
-			delete(pMinItem);
-			delete(pRange);
+			delete pMinItem;
+			delete pRange;
 			return false;
 		}
 
@@ -247,23 +200,21 @@ namespace Sindy
 		typedef std::multimap<double, BoundItem*, DoubleLess>::iterator MapIter;
 		typedef std::pair<MapIter, MapIter> PairMapIter;
 
-
 		std::multimap<double, BoundItem*, DoubleLess>::const_iterator iter = m_mapDouble2Item.begin();
 
 		for (; iter != m_mapDouble2Item.end(); ++iter)
 		{
 			RangeItem* pSrcItem = static_cast<RangeItem*>(iter->second);
 
-
 			if (pSrcItem->m_isMin) // 最小点
 			{
-				// map.Max.y >= src.Min.y 为了支持包含的情况：例：1米的桥架包含0.5米的桥架内回路
+				// map.Max.y >= src.Min.y 为了支持完全覆盖的情况
 				std::multimap<double, BoundItem*, DoubleLess>::iterator it = mapY2Item.lower_bound(pSrcItem->m_dMinY);
 
 				for (; it != mapY2Item.end(); ++it)
 				{
 					RangeItem* pDestItem = static_cast<RangeItem*>(it->second);
-
+					// 自定义传出数据
 					if (!function(pSrcItem->m_isSrc, pDestItem->m_isSrc))
 						continue;
 
@@ -294,71 +245,6 @@ namespace Sindy
 						mapY2Item.erase(pairIter.first);
 						break;
 					}
-
-					++pairIter.first;
-				}
-			}
-		}
-	}
-
-	// 勿用，此函数有待处理20200220
-	void Range2d::GetSameItems(std::vector<RangeItem*>& vecIntersect)
-	{
-		std::multimap<double, BoundItem*, DoubleLess> mapY2Item;
-
-		typedef std::multimap<double, BoundItem*, DoubleLess>::iterator MapIter;
-		typedef std::pair<MapIter, MapIter> PairMapIter;
-
-
-		std::multimap<double, BoundItem*, DoubleLess>::const_iterator iter = m_mapDouble2Item.begin();
-
-		for (; iter != m_mapDouble2Item.end(); ++iter)
-		{
-			RangeItem* pSrcItem = static_cast<RangeItem*>(iter->second);
-
-
-			if (pSrcItem->m_isMin) // 最小点
-			{
-				std::multimap<double, BoundItem*, DoubleLess>::iterator it = mapY2Item.lower_bound(pSrcItem->m_dMinY);
-
-				for (; it != mapY2Item.end(); ++it)
-				{
-					RangeItem* pDestItem = static_cast<RangeItem*>(it->second);
-
-					if (!pSrcItem->m_isSrc && !pDestItem->m_isSrc)
-						continue;
-
-					if (pDestItem->m_dMinY > pSrcItem->m_dMaxY)
-						break;
-
-					if (pDestItem->m_dMaxY <= pSrcItem->m_dMaxY)
-					{
-						pSrcItem->m_pItems->m_items.push_back(pDestItem);
-						pDestItem->m_pItems->m_items.push_back(pSrcItem);
-					}
-				}
-
-				// 此容器的Key是MinY
-				mapY2Item.insert(std::make_pair(pSrcItem->m_dMinY, pSrcItem));
-			}
-			else // 最大点
-			{
-				// 取到当前Y
-				PairMapIter pairIter = mapY2Item.equal_range(pSrcItem->m_dMinY);
-
-				while (pairIter.first != pairIter.second)
-				{
-					// 比较地址
-					if (pairIter.first->second->m_ipItem == pSrcItem->m_ipItem)
-					{
-						// 添加相关Item
-						if (pSrcItem->m_isSrc && !pSrcItem->m_pItems->m_items.empty())
-							vecIntersect.push_back(pSrcItem);
-
-						mapY2Item.erase(pairIter.first);
-						break;
-					}
-
 					++pairIter.first;
 				}
 			}

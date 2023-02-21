@@ -1,9 +1,6 @@
 #pragma once
 #include "../SindyGlobal.h"
-#include ".\GeoClass.h"
-
-
-
+#include "GeoClass.h"
 
 namespace Sindy
 {
@@ -44,9 +41,6 @@ namespace Sindy
 		return false;
 	}
 
-
-
-
 	class IBoundItem
 	{
 	public:
@@ -76,8 +70,7 @@ namespace Sindy
 		class Ranges
 		{
 		public:
-			// 这里不释放
-			std::vector<RangeItem*> m_items;
+			std::vector<RangeItem*> m_items;  // 这里不释放
 		};
 
 		RangeItem(IBoundItem* ipItem, Ranges* pRange, bool isMin, bool isSrc);
@@ -94,9 +87,6 @@ namespace Sindy
 		// 简化客户代码
 		std::vector<RangeItem*>::iterator Begin() { return m_pItems->m_items.begin(); }
 		std::vector<RangeItem*>::iterator End() { return m_pItems->m_items.end(); }
-
-		int Size() { return int(m_pItems->m_items.size()); }
-		//std::vector<RangeItem*>::iterator At(int iPos){ return m_pItems->m_items.at(iPos); }
 	};
 
 
@@ -105,43 +95,27 @@ namespace Sindy
 	{
 	public:
 		~Range2d();
-
 		void Reset();
 
 		// 请调用者保证Item唯一性
-		bool SetItemMin(IBoundItem* ipItem, double dTol = 0.0, bool isNeedCheckRepeat = false);
+		bool SetItemMin(IBoundItem* ipItem, double dTol = 0.0);
 		// 获取某个范围内的Item
 		void GetSameItem(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol = 1000)const;
 		void GetSameItem(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol = 1000)const;
 
-		// 勿用，此函数有待处理20200220
-		void GetSameItems(std::vector<RangeItem*>& vecIntersect);
-
-
-		///////////////////////////////////////////////////////////////////////////////////////////////
-
-
 		// 请调用者保证Item唯一性
-		bool SetItemMax(IBoundItem* ipItem, double dTol = 0.0, bool isNeedCheckRepeat = false);
+		bool SetItemMax(IBoundItem* ipItem, double dTol = 0.0);
 		void GetIntersectItem(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol)const;
 		void GetIntersectItem(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol = 1000)const;
 
-
-
-		///////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 		// 只输出源实体相关的Bound，请调用者保证Item唯一性
-		bool SetItems(IBoundItem* ipItem, bool isSrc = true, double dTol = 0.0, bool isNeedCheckRepeat = false);
+		bool SetItems(IBoundItem* ipItem, bool isSrc = true, double dTol = 0.0);
 		// 获取相交的Item，包括覆盖的情况。调用者不要释放传出的容器
 		void GetIntersectItems(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function = CompareSrc);
 
 	private:
 
 		std::multimap<double, BoundItem*, DoubleLess> m_mapDouble2Item;
-
-		std::set<REGIONID> m_setCheck;
 	};
 
 	template<typename Array>

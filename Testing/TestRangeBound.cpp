@@ -8,8 +8,6 @@
 #include <sstream>
 #include <codecvt>
 
-
-
 void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 {
 	using namespace Sindy;
@@ -364,5 +362,3 @@ void TestPerformance::testTraverse()
 		}
 	}
 }
-
-

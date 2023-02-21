@@ -8,12 +8,12 @@
 >对84834个实体求交 -> 算法2：外包排斥 总计：35315ms<br>
 >对84834个实体求交 -> 算法3：Range2d 总计：803ms
 
-3. 为了支持测试，项目中把84834个图形序列化了到TestData.db3中，intersect/SQLite/SindySQLite.cpp提供相应的读写函数。
+3. 为了支持测试，项目中把84834个图形序列化到数据库TestData.db3中，intersect/SQLite/SindySQLite.cpp提供相应的读写函数。
 4. intersect/Common包含了一些计时等工具函数。
 
 ## 算法思路
 1. 每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding是否相交。
-2. Bounding相交可以用排斥的思路快速求出，你可以很容易实现下面的Extents类，注意inExtents、outExtents函数，最佳情况下只需要一次浮点数比较就能判断两个图形是否相交。
+2. Bounding相交可以用排斥的思路快速求出，你可以很容易实现下面的Extents类，注意inExtents、outExtents函数，最佳情况下只需要一次浮点数比较就能判断两个图形是否相交，这里的“快速排斥思想”是判断两个图形是否相交的基础。
 ```cpp
 // .h
 #define MY_ZERO 0.00001  // 1e-5
@@ -166,10 +166,12 @@ MyPoint MyExtents::centerPt()
     return pt;
 }
 ```
-3. 把几何图形学上的思想和排序算法结合，就可以更快速地查询图形的相交情况，这是算法核心思想。
+3. 把计算几何中快速排斥的思想和排序算法相结合，就可以更快速地查询图形的相交情况，这是本算法的核心思想。
 4. 用户通过Sindy::Range2d启动算法，把每个Bounding的最小点、最大点的X值分别创建item放进std::multimap中，算法启动时，会先创建Y方向的临时容器std::multimap，而后从小到大遍历X轴的容器。
-5. 当遍历到某个item的最小点时，与此图形相交的其它图形开始创建两两关联；当遍历到item的最大点时，与此图形相交的其它图形都找完了。在这之间，遍历到最小点时，会将item的最大点的Y值放进临时容器（请思考为什么是max.y）；遍历到最大点时，会将当前的max.y从临时容器移除。
-6. 核心实现都在Range2d::GetIntersectItems，其它函数都是各种变体。
+5. 当遍历到某个item的最小点时，与此图形相交的其它图形开始创建两两关联，请注意mapY2Item.lower_bound(pSrcItem->m_dMinY)，此时不会找到min.x大于item.min.x的目标图形，但是后续遍历到目标图形时仍然会正确地创建两者的关联。
+6. 当遍历到item的最大点时，与此图形相交的其它图形都找完了，所以把所有Y值为item.max.y的图形从mapY2Item中移除。
+7. 请注意，这里是关键点：遍历到最小点时，会将item的最大点的Y值放进临时容器（请思考为什么是max.y）；遍历到最大点时，会将当前的max.y从临时容器移除。
+8. 核心实现都在Range2d::GetIntersectItems（创建节点数据时请使用配套的SetItemMax函数），其它函数都是各种变体。
 
 ## 使用
 1. 为了支持业务扩展，使用者需要把每个待计算的图形或图形数据类继承自IBoundItem，并至少重写GetExtents函数，该函数用于获取图形的Bounding，这是必须的。GetId可以返回某种标记，可以是数组索引、图形ID等，当你需要一个额外的值时。
