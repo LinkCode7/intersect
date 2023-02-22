@@ -41,7 +41,7 @@ namespace Sindy
 		return false;
 	}
 
-	class IBoundItem
+	class SINDY_API IBoundItem
 	{
 	public:
 		virtual bool GetId(REGIONID& id);
