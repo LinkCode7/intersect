@@ -2,9 +2,6 @@
 #include "../SindyGlobal.h"
 #include "../RangeBound/RangeBound.h"
 
-
-
-
 namespace TestPerformance
 {
 	void entry(const PString& strDbPath, const PString& strLogPath);
@@ -42,7 +39,7 @@ namespace TestPerformance
 
 		Extents m_extents;
 
-		bool GetExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY) override
+		bool getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY) override
 		{
 			Point3d ptMin = m_extents.minPoint();
 			dMinX = ptMin.x;

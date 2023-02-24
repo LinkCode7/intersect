@@ -106,11 +106,11 @@ void TestPerformance::testRangeBound(const std::vector<TestLineData*>& vecLineDa
 	Range2d range;
 	for (const auto& pData : vecLineData)
 	{
-		range.SetItems(pData, true, 100);
+		range.setItem(pData, true, 100);
 	}
 
 	std::vector<RangeItem*> vecItem;
-	range.GetIntersectItems(vecItem);
+	range.getIntersectItem(vecItem);
 
 	std::vector<RangeItem*>::iterator iter = vecItem.begin();
 	for (; iter != vecItem.end(); ++iter) // 771ms
@@ -194,10 +194,10 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 	{
 		Range2d range;
 		for (const auto& pData : vecLineData)
-			range.SetItems(pData, true, 100);
+			range.setItem(pData, true, 100);
 
 		std::vector<RangeItem*> vecItem;
-		range.GetIntersectItems(vecItem);
+		range.getIntersectItem(vecItem);
 
 		std::vector<RangeItem*>::iterator iter = vecItem.begin();
 		for (; iter != vecItem.end(); ++iter) // 771ms

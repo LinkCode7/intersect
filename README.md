@@ -1,5 +1,5 @@
 ## 简介
-该仓库包含了一个性能较好的求交算法，用于计算大批量的图形之间的相交情况。
+该仓库包含了一个性能较好的求交算法，用于计算大批量的几何图形之间的相交情况。
 
 ## 组成
 1. 算法核心在intersect/RangeBound/RangeBound.cpp中。
@@ -15,7 +15,9 @@
 1. 每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding是否相交。
 2. Bounding相交可以用排斥的思路快速求出，你可以很容易实现下面的Extents类，注意inExtents、outExtents函数，最佳情况下只需要一次浮点数比较就能判断两个图形是否相交，这里的“快速排斥思想”是判断两个图形是否相交的基础。
 ```cpp
-// .h
+// MyExtents.h
+#include <initializer_list>
+
 #define MY_ZERO 0.00001  // 1e-5
 
 class MyPoint
@@ -33,9 +35,9 @@ class MyExtents
 
 public:
     MyExtents();
-    MyExtents(const MyPoint &pt);
-    MyExtents(const MyPoint &ptMin, const MyPoint &ptMax);
-    void           set(const MyPoint &ptMin, const MyPoint &ptMax);
+    MyExtents(const MyPoint& pt);
+    MyExtents(const std::initializer_list<MyPoint>& list);
+    void           set(const MyPoint& ptMin, const MyPoint& ptMax);
     inline MyPoint min() const { return m_min; }
     inline MyPoint max() const { return m_max; }
 
@@ -43,18 +45,19 @@ public:
     bool    invalid();
     MyPoint centerPt();
     void    expand(double value);  // 扩大或缩小(负数)包络
-    void    moveTo(const MyPoint &ptNewCenter);
+    void    moveTo(const MyPoint& ptNewCenter);
 
-    void addPoint(const MyPoint &pt);
-    void addExtents(const MyExtents &ext);
-    void operator+=(const MyExtents &ext);
-    bool inExtents(const MyPoint &pt, double tol = MY_ZERO) const;
-    bool outExtents(const MyPoint &pt, double tol = MY_ZERO) const;
-    bool outExtents(const MyExtents &ext, double tol = MY_ZERO) const;
+    void addPoint(const MyPoint& pt);
+    void addExtents(const MyExtents& ext);
+    void operator+=(const MyExtents& ext);
+    bool inExtents(const MyPoint& pt, double tol = MY_ZERO) const;
+    bool outExtents(const MyPoint& pt, double tol = MY_ZERO) const;
+    bool outExtents(const MyExtents& ext, double tol = MY_ZERO) const;
 };
 ```
 ```cpp
-// .cpp
+// MyExtents.cpp
+#include "MyExtents.h"
 #include "float.h"
 
 #define MY_EXTENTS_MAX -DBL_MAX
@@ -71,16 +74,23 @@ bool compareDouble(double value1, double value2, double tol = MY_ZERO)
     return false;
 }
 
-MyExtents::MyExtents() : m_min{MY_EXTENTS_MIN, MY_EXTENTS_MIN}, m_max{MY_EXTENTS_MAX, MY_EXTENTS_MAX} {}
-MyExtents::MyExtents(const MyPoint &pt) : m_min(pt), m_max(pt) {}
-MyExtents::MyExtents(const MyPoint &ptMin, const MyPoint &ptMax) : m_min(ptMin), m_max(ptMax) {}
+MyExtents::MyExtents() : m_min{ MY_EXTENTS_MIN, MY_EXTENTS_MIN }, m_max{ MY_EXTENTS_MAX, MY_EXTENTS_MAX } {}
+MyExtents::MyExtents(const MyPoint& pt) : m_min(pt), m_max(pt) {}
+MyExtents::MyExtents(const std::initializer_list<MyPoint>& list)
+    : m_min{ MY_EXTENTS_MIN, MY_EXTENTS_MIN }
+    , m_max{ MY_EXTENTS_MAX, MY_EXTENTS_MAX }
+{
+    for (const auto& point : list)
+        addPoint(point);
+}
+
 
 void MyExtents::reset()
 {
-    m_min = {MY_EXTENTS_MIN, MY_EXTENTS_MIN};
-    m_max = {MY_EXTENTS_MAX, MY_EXTENTS_MAX};
+    m_min = { MY_EXTENTS_MIN, MY_EXTENTS_MIN };
+    m_max = { MY_EXTENTS_MAX, MY_EXTENTS_MAX };
 }
-void MyExtents::set(const MyPoint &ptMin, const MyPoint &ptMax)
+void MyExtents::set(const MyPoint& ptMin, const MyPoint& ptMax)
 {
     m_min = ptMin;
     m_max = ptMax;
@@ -93,7 +103,7 @@ bool MyExtents::invalid()
         return true;
     return false;
 }
-void MyExtents::addPoint(const MyPoint &pt)
+void MyExtents::addPoint(const MyPoint& pt)
 {
     if (pt.x < m_min.x)
         m_min.x = pt.x;
@@ -105,18 +115,18 @@ void MyExtents::addPoint(const MyPoint &pt)
     if (pt.y > m_max.y)
         m_max.y = pt.y;
 }
-void MyExtents::addExtents(const MyExtents &ext)
+void MyExtents::addExtents(const MyExtents& ext)
 {
     addPoint(ext.m_min);
     addPoint(ext.m_max);
 }
-void MyExtents::operator+=(const MyExtents &ext)
+void MyExtents::operator+=(const MyExtents& ext)
 {
     addPoint(ext.m_min);
     addPoint(ext.m_max);
 }
 
-bool MyExtents::inExtents(const MyPoint &pt, double tol) const
+bool MyExtents::inExtents(const MyPoint& pt, double tol) const
 {
     if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
         return false;
@@ -124,7 +134,7 @@ bool MyExtents::inExtents(const MyPoint &pt, double tol) const
         return false;
     return true;
 }
-bool MyExtents::outExtents(const MyPoint &pt, double tol) const
+bool MyExtents::outExtents(const MyPoint& pt, double tol) const
 {
     if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
         return true;
@@ -132,7 +142,7 @@ bool MyExtents::outExtents(const MyPoint &pt, double tol) const
         return true;
     return false;
 }
-bool MyExtents::outExtents(const MyExtents &ext, double tol) const
+bool MyExtents::outExtents(const MyExtents& ext, double tol) const
 {
     if (ext.m_max.x < m_min.x - tol || ext.m_min.x > m_max.x + tol)
         return true;
@@ -149,9 +159,9 @@ void MyExtents::expand(double value)
     m_max.y += value;
 }
 
-void MyExtents::moveTo(const MyPoint &ptNewCenter)
+void MyExtents::moveTo(const MyPoint& ptNewCenter)
 {
-    MyPoint ptCurCenter{(double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5))};
+    MyPoint ptCurCenter{ (double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5)) };
     double   offsetX = ptNewCenter.x - ptCurCenter.x;
     double   offsetY = ptNewCenter.y - ptCurCenter.y;
     m_min.x += offsetX;
@@ -162,7 +172,7 @@ void MyExtents::moveTo(const MyPoint &ptNewCenter)
 
 MyPoint MyExtents::centerPt()
 {
-    MyPoint pt{(double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5))};
+    MyPoint pt{ (double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5)) };
     return pt;
 }
 ```
@@ -171,8 +181,8 @@ MyPoint MyExtents::centerPt()
 5. 当遍历到某个item的最小点时，与此图形相交的其它图形开始创建两两关联，请注意mapY2Item.lower_bound(pSrcItem->m_dMinY)，此时不会找到min.x大于item.min.x的目标图形，但是后续遍历到目标图形时仍然会正确地创建两者的关联。
 6. 当遍历到item的最大点时，与此图形相交的其它图形都找完了，所以把所有Y值为item.max.y的图形从mapY2Item中移除。
 7. 请注意，这里是关键点：遍历到最小点时，会将item的最大点的Y值放进临时容器（请思考为什么是max.y）；遍历到最大点时，会将当前的max.y从临时容器移除。
-8. 核心实现都在Range2d::GetIntersectItems（创建节点数据时请使用配套的SetItemMax函数），其它函数都是各种变体。
+8. 核心实现都在Range2d::getIntersectItem（创建节点数据时请使用配套的setItem函数），其它函数都是各种变体。
 
 ## 使用
-1. 为了支持业务扩展，使用者需要把每个待计算的图形或图形数据类继承自IBoundItem，并至少重写GetExtents函数，该函数用于获取图形的Bounding，这是必须的。GetId可以返回某种标记，可以是数组索引、图形ID等，当你需要一个额外的值时。
+1. 为了支持业务扩展，使用者需要把每个待计算的图形或图形数据类继承自IBoundItem，并至少重写getExtents函数，该函数用于获取图形的Bounding，这是必须的。getId可以返回某种标记，可以是数组索引、图形ID等，当你需要一个额外的值时。
 2. 具体用法请参考测试代码。

@@ -2,11 +2,11 @@
 
 namespace Sindy
 {
-	bool IBoundItem::GetId(REGIONID& id)
+	bool IBoundItem::getId(REGIONID& id)
 	{
 		return false;
 	}
-	bool IBoundItem::GetExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY)
+	bool IBoundItem::getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY)
 	{
 		return false;
 	}
@@ -55,12 +55,12 @@ namespace Sindy
 		m_mapDouble2Item.clear();
 	}
 
-	bool Range2d::SetItemMin(IBoundItem* ipItem, double dTol)
+	bool Range2d::setItemMin(IBoundItem* ipItem, double dTol)
 	{
 		if (!ipItem) return false;
 
 		BoundItem* pItem = new BoundItem(ipItem);
-		if (!ipItem->GetExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
+		if (!ipItem->getExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
 		{
 			delete pItem;
 			return false;
@@ -76,7 +76,7 @@ namespace Sindy
 		return true;
 	}
 
-	void Range2d::GetSameItem(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol) const
+	void Range2d::getSameItem(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol) const
 	{
 		double dLeft = ptMin.x - dTol;
 		double dRight = ptMax.x + dTol;
@@ -102,18 +102,18 @@ namespace Sindy
 		}
 	}
 
-	void Range2d::GetSameItem(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol) const
+	void Range2d::getSameItem(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol) const
 	{
-		GetSameItem(Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, dTol);
+		getSameItem(Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, dTol);
 	}
 
-	bool Range2d::SetItemMax(IBoundItem* ipItem, double dTol)
+	bool Range2d::setItemMax(IBoundItem* ipItem, double dTol)
 	{
 		if (!ipItem) return false;
 
 		BoundItem* pItem = new BoundItem(ipItem);
 
-		if (!ipItem->GetExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
+		if (!ipItem->getExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
 		{
 			delete pItem;
 			return false;
@@ -130,7 +130,7 @@ namespace Sindy
 		return true;
 	}
 
-	void Range2d::GetIntersectItem(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol) const
+	void Range2d::getIntersectItem2(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol) const
 	{
 		double dLeft = ptMin.x - dTol;
 		double dRight = ptMax.x + dTol;
@@ -154,19 +154,19 @@ namespace Sindy
 		}
 	}
 
-	void Range2d::GetIntersectItem(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol) const
+	void Range2d::getIntersectItem2(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol) const
 	{
-		GetIntersectItem(Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, dTol);
+		getIntersectItem2(Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, dTol);
 	}
 
 	// 只输出源实体相关的Bound
-	bool Range2d::SetItems(IBoundItem* ipItem, bool isSrc, double dTol)
+	bool Range2d::setItem(IBoundItem* ipItem, bool isSrc, double dTol)
 	{
 		if (!ipItem) return false;
 
 		RangeItem::Ranges* pRange = new(RangeItem::Ranges);
 		RangeItem* pMinItem = new RangeItem(ipItem, pRange, true, isSrc);
-		if (!ipItem->GetExtents(pMinItem->m_dMinX, pMinItem->m_dMinY, pMinItem->m_dMaxX, pMinItem->m_dMaxY))
+		if (!ipItem->getExtents(pMinItem->m_dMinX, pMinItem->m_dMinY, pMinItem->m_dMaxX, pMinItem->m_dMaxY))
 		{
 			delete pMinItem;
 			delete pRange;
@@ -192,8 +192,8 @@ namespace Sindy
 		return true;
 	}
 
-	// SetItems时要设置误差
-	void Range2d::GetIntersectItems(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function)
+	// setItem时要设置误差
+	void Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function)
 	{
 		std::multimap<double, BoundItem*, DoubleLess> mapY2Item;
 
