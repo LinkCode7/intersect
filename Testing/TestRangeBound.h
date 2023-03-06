@@ -1,6 +1,6 @@
 #pragma once
 #include "../SindyGlobal.h"
-#include "../RangeBound/RangeBound.h"
+#include "../Range/RangeBound.h"
 
 namespace TestPerformance
 {
@@ -33,19 +33,19 @@ namespace TestPerformance
 	{
 	public:
 		std::string m_strId;
-		Point3d m_ptBegin;
-		Point3d m_ptEnd;
+		Sindy::Point3d m_ptBegin;
+		Sindy::Point3d m_ptEnd;
 		double m_dBulge = 0.0;
 
-		Extents m_extents;
+		Sindy::Extents m_extents;
 
 		bool getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY) override
 		{
-			Point3d ptMin = m_extents.minPoint();
+			Sindy::Point3d ptMin = m_extents.min();
 			dMinX = ptMin.x;
 			dMinY = ptMin.y;
 
-			Point3d ptMax = m_extents.maxPoint();
+			Sindy::Point3d ptMax = m_extents.max();
 			dMaxX = ptMax.x;
 			dMaxY = ptMax.y;
 			return true;
@@ -53,7 +53,7 @@ namespace TestPerformance
 	};
 
 
-	inline bool isSamePt(const Point3d& ptSrc, const Point3d& ptDes, double dTol = 1.0)
+	inline bool isSamePt(const Sindy::Point3d& ptSrc, const Sindy::Point3d& ptDes, double dTol = 1.0)
 	{
 		if (fabs(ptSrc.x - ptDes.x) <= dTol && fabs(ptSrc.y - ptDes.y) <= dTol)
 			return true;

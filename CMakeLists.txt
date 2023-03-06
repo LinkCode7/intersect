@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 aux_source_directory(./ SRCS)
 aux_source_directory(./Common SRCS)
-aux_source_directory(./RangeBound SRCS)
+aux_source_directory(./Range SRCS)
 aux_source_directory(./SQLite SRCS)
 aux_source_directory(./Testing SRCS)
 

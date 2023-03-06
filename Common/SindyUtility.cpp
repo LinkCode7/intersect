@@ -1,4 +1,4 @@
-#include "StringUtil.h"
+#include "SindyUtility.h"
 
 namespace Sindy
 {

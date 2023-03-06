@@ -1,5 +1,5 @@
 ## 简介
-该仓库包含了一个性能较好的求交算法，用于计算大批量的几何图形之间的相交情况。
+该仓库包含了一个性能较好的求交算法，用于计算大批量的几何图形之间的相交情况。它的优势在于一次性计算大量图形两两之间的相交情况，相同测试数据下，[boost.geometry.spatial_indexes.rtree](https://www.boost.org/doc/libs/1_81_0/libs/geometry/doc/html/geometry/spatial_indexes/)创建加查询全部需要5332ms + 994ms。
 
 ## 组成
 1. 算法核心在intersect/RangeBound/RangeBound.cpp中。

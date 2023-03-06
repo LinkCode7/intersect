@@ -1,6 +1,6 @@
 #pragma once
 #include "../SindyGlobal.h"
-#include "GeoClass.h"
+#include "../Common/SindyUtility.h"
 
 #define ZERO 0.000001
 #define UNKNOWN_REGION_ID -999999

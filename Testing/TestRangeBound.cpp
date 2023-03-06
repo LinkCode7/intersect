@@ -3,10 +3,8 @@
 #include "../SQLite/SindySQLite.h"
 
 #include "../Common/SindyRunTime.h"
-#include "../Common/StringUtil.h"
-#include "../Common/template.h"
+#include "../Common/SindyUtility.h"
 #include <sstream>
-#include <codecvt>
 
 void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 {
@@ -178,7 +176,7 @@ void TestPerformance::unSerializePoints(const PString& strDbPath, std::vector<Te
 		double dMaxY = 0.0;
 		database.getValueDouble(max_y, dMaxY);
 
-		pLineData->m_extents.reset(Point3d(dMinX, dMinY, 0.0), Point3d(dMaxX, dMaxY, 0.0));
+		pLineData->m_extents.reset(Sindy::Point3d(dMinX, dMinY, 0.0), Sindy::Point3d(dMaxX, dMaxY, 0.0));
 
 		vecLineData.push_back(pLineData);
 	}
