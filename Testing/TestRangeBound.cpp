@@ -1,7 +1,6 @@
 #include "TestRangeBound.h"
 
 #include "../SQLite/SindySQLite.h"
-
 #include "../Common/SindyRunTime.h"
 #include "../Common/SindyUtility.h"
 #include <sstream>
@@ -10,7 +9,7 @@ void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 {
 	using namespace Sindy;
 
-	std::vector<TestLineData*> vecLineData;
+	std::vector<TestLineDataBound*> vecLineData;
 	unSerializePoints(strDbPath, vecLineData);
 
 	testFor(vecLineData, strLogPath);
@@ -21,7 +20,7 @@ void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 		delete info;
 }
 
-void TestPerformance::testFor(const std::vector<TestLineData*>& vecLineData, const PString& strLogPath)
+void TestPerformance::testFor(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath)
 {
 	using namespace Sindy;
 	RunTime time;
@@ -29,12 +28,12 @@ void TestPerformance::testFor(const std::vector<TestLineData*>& vecLineData, con
 	int size = static_cast<int>(vecLineData.size());
 	for (int i = 0; i < size; ++i)
 	{
-		TestLineData* pSrcLineData = vecLineData[i];
+		TestLineDataBound* pSrcLineData = vecLineData[i];
 
 		//for (int j = 0; j < size; ++j) // 245969ms
 		for (int j = i + 1; j < size; ++j) // 100360ms
 		{
-			TestLineData* pDesLineData = vecLineData[j];
+			TestLineDataBound* pDesLineData = vecLineData[j];
 
 			bool isLink = false;
 			if (isSamePt(pSrcLineData->m_ptBegin, pDesLineData->m_ptBegin))
@@ -57,7 +56,7 @@ void TestPerformance::testFor(const std::vector<TestLineData*>& vecLineData, con
 	time.write(strLogPath, strText);
 }
 
-void TestPerformance::testOutOf(const std::vector<TestLineData*>& vecLineData, const PString& strLogPath)
+void TestPerformance::testOutOf(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath)
 {
 	using namespace Sindy;
 	RunTime time;
@@ -65,11 +64,11 @@ void TestPerformance::testOutOf(const std::vector<TestLineData*>& vecLineData, c
 	int size = static_cast<int>(vecLineData.size());
 	for (int i = 0; i < size; ++i)
 	{
-		TestLineData* pSrcLineData = vecLineData[i];
+		TestLineDataBound* pSrcLineData = vecLineData[i];
 
 		for (int j = i + 1; j < size; ++j) // 100360ms
 		{
-			TestLineData* pDesLineData = vecLineData[j];
+			TestLineDataBound* pDesLineData = vecLineData[j];
 
 			// 外包排斥
 			if (pSrcLineData->m_extents.outExtents(pDesLineData->m_extents))
@@ -96,7 +95,7 @@ void TestPerformance::testOutOf(const std::vector<TestLineData*>& vecLineData, c
 	time.write(strLogPath, strText);
 }
 
-void TestPerformance::testRangeBound(const std::vector<TestLineData*>& vecLineData, const PString& strLogPath)
+void TestPerformance::testRangeBound(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath)
 {
 	using namespace Sindy;
 	RunTime time;
@@ -114,13 +113,13 @@ void TestPerformance::testRangeBound(const std::vector<TestLineData*>& vecLineDa
 	for (; iter != vecItem.end(); ++iter) // 771ms
 	{
 		RangeItem* pItem = *iter;
-		TestLineData* pSrcLineData = static_cast<TestLineData*>(pItem->m_ipItem);
+		TestLineDataBound* pSrcLineData = static_cast<TestLineDataBound*>(pItem->m_ipItem);
 
 		std::vector<RangeItem*>::iterator it = pItem->m_pItems->m_items.begin();
 		for (; it != pItem->m_pItems->m_items.end(); ++it)
 		{
 			RangeItem* pIntersectItem = *it;
-			TestLineData* pDesLineData = static_cast<TestLineData*>(pIntersectItem->m_ipItem);
+			TestLineDataBound* pDesLineData = static_cast<TestLineDataBound*>(pIntersectItem->m_ipItem);
 
 			bool isLink = false;
 			if (isSamePt(pSrcLineData->m_ptBegin, pDesLineData->m_ptBegin))
@@ -144,48 +143,10 @@ void TestPerformance::testRangeBound(const std::vector<TestLineData*>& vecLineDa
 	time.write(strLogPath, strText);
 }
 
-void TestPerformance::unSerializePoints(const PString& strDbPath, std::vector<TestLineData*>& vecLineData)
-{
-	// TestData.Line
-	Sindy::SQLite database(strDbPath);
-
-	std::ostringstream oss;
-	oss << "select * from " << table_name;
-	std::string strSql = oss.str();
-
-	database.beginTransaction();
-	database.prepare(strSql);
-
-	while (SQLITE_ROW == database.step())
-	{
-		TestLineData* pLineData = new TestLineData;
-		database.getValueText(handle, pLineData->m_strId);
-
-		database.getValueDouble(bulge, pLineData->m_dBulge);
-		database.getValueDouble(from_x, pLineData->m_ptBegin.x);
-		database.getValueDouble(from_y, pLineData->m_ptBegin.y);
-		database.getValueDouble(to_x, pLineData->m_ptEnd.x);
-		database.getValueDouble(to_y, pLineData->m_ptEnd.y);
-
-		double dMinX = 0.0;
-		database.getValueDouble(min_x, dMinX);
-		double dMinY = 0.0;
-		database.getValueDouble(min_y, dMinY);
-		double dMaxX = 0.0;
-		database.getValueDouble(max_x, dMaxX);
-		double dMaxY = 0.0;
-		database.getValueDouble(max_y, dMaxY);
-
-		pLineData->m_extents.reset(Sindy::Point3d(dMinX, dMinY, 0.0), Sindy::Point3d(dMaxX, dMaxY, 0.0));
-
-		vecLineData.push_back(pLineData);
-	}
-}
-
 void TestPerformance::testAccuracy(const PString& strDbPath)
 {
 	using namespace Sindy;
-	std::vector<TestLineData*> vecLineData;
+	std::vector<TestLineDataBound*> vecLineData;
 	unSerializePoints(strDbPath, vecLineData);
 
 	std::map<std::string, std::set<std::string>*> mapLine2Links1, mapLine2Links2;
@@ -201,13 +162,13 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 		for (; iter != vecItem.end(); ++iter) // 771ms
 		{
 			RangeItem* pItem = *iter;
-			TestLineData* pSrcLineData = static_cast<TestLineData*>(pItem->m_ipItem);
+			TestLineDataBound* pSrcLineData = static_cast<TestLineDataBound*>(pItem->m_ipItem);
 
 			std::vector<RangeItem*>::iterator it = pItem->m_pItems->m_items.begin();
 			for (; it != pItem->m_pItems->m_items.end(); ++it)
 			{
 				RangeItem* pIntersectItem = *it;
-				TestLineData* pDesLineData = static_cast<TestLineData*>(pIntersectItem->m_ipItem);
+				TestLineDataBound* pDesLineData = static_cast<TestLineDataBound*>(pIntersectItem->m_ipItem);
 
 				bool isLink = false;
 				if (isSamePt(pSrcLineData->m_ptBegin, pDesLineData->m_ptBegin))
@@ -232,11 +193,11 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 		int size = static_cast<int>(vecLineData.size());
 		for (int i = 0; i < size; ++i)
 		{
-			TestLineData* pSrcLineData = vecLineData[i];
+			TestLineDataBound* pSrcLineData = vecLineData[i];
 
 			for (int j = 0; j < size; ++j)
 			{
-				TestLineData* pDesLineData = vecLineData[j];
+				TestLineDataBound* pDesLineData = vecLineData[j];
 				if (pSrcLineData == pDesLineData)
 					continue;
 				bool isLink = false;

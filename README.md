@@ -1,12 +1,13 @@
 ## 简介
-该仓库包含了一个性能较好的求交算法，用于计算大批量的几何图形之间的相交情况。它的优势在于一次性计算大量图形两两之间的相交情况，相同测试数据下，[boost.geometry.spatial_indexes.rtree](https://www.boost.org/doc/libs/1_81_0/libs/geometry/doc/html/geometry/spatial_indexes/)创建加查询全部需要5332ms + 994ms。
+该仓库包含了一个性能较好的求交算法，用于计算大批量的几何图形之间的相交情况。它的优势在于一次性计算大量图形两两之间的相交情况，相同测试数据下比[boost.geometry.spatial_indexes.rtree](https://www.boost.org/doc/libs/1_81_0/libs/geometry/doc/html/geometry/spatial_indexes/)快很多。
 
 ## 组成
 1. 算法核心在intersect/RangeBound/RangeBound.cpp中。
 2. 测试代码在intersect/Testing中，包含准确性测试、性能测试，测试结果会打印在TestResult.log中，如：
->对84834个实体求交 -> 算法1：暴力遍历 总计：121727ms<br>
->对84834个实体求交 -> 算法2：外包排斥 总计：35315ms<br>
->对84834个实体求交 -> 算法3：Range2d 总计：803ms
+> 对84834个实体求交 -> 算法1：暴力遍历 总计：53910ms<br>
+> 对84834个实体求交 -> 算法2：外包排斥 总计：12973ms<br>
+> 对84834个实体求交 -> 算法3：Range2d 总计：460ms<br>
+> 对84834个实体求交 -> 算法4：boost.geometry.index.rtree 总计：2247ms
 
 3. 为了支持测试，项目中把84834个图形序列化到数据库TestData.db3中，intersect/SQLite/SindySQLite.cpp提供相应的读写函数。
 4. intersect/Common包含了一些计时等工具函数。
