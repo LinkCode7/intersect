@@ -153,7 +153,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 	{
 		Range2d range;
 		for (const auto& pData : vecLineData)
-			range.setItem(pData, true, 100);
+			range.setItem(pData, true);
 
 		std::vector<RangeItem*> vecItem;
 		range.getIntersectItem(vecItem);

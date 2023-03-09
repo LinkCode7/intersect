@@ -37,14 +37,14 @@ class MyExtents
 public:
     MyExtents();
     MyExtents(const MyPoint& pt);
-    MyExtents(const std::initializer_list<MyPoint>& list);
+    explicit MyExtents(const std::initializer_list<MyPoint>& list);
     void           set(const MyPoint& ptMin, const MyPoint& ptMax);
     inline MyPoint min() const { return m_min; }
     inline MyPoint max() const { return m_max; }
 
     void    reset();
     bool    invalid();
-    MyPoint centerPt();
+    MyPoint centerPt() const;
     void    expand(double value);  // 扩大或缩小(负数)包络
     void    moveTo(const MyPoint& ptNewCenter);
 
@@ -171,7 +171,7 @@ void MyExtents::moveTo(const MyPoint& ptNewCenter)
     m_max.y += offsetY;
 }
 
-MyPoint MyExtents::centerPt()
+MyPoint MyExtents::centerPt() const
 {
     MyPoint pt{ (double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5)) };
     return pt;

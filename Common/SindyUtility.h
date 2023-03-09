@@ -55,6 +55,12 @@ namespace Sindy
 			y = dY;
 			z = dZ;
 		}
+		Point3d(double dX, double dY)
+		{
+			x = dX;
+			y = dY;
+			z = SINDY_DEFAULT_DOUBLE;
+		}
 
 		double x, y, z;
 	};

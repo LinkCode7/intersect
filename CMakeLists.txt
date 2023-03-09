@@ -3,10 +3,10 @@ project(intersect)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# test boost.geometry.spatial_indexes.rtree
-add_compile_definitions(TEST_BOOST_RTREE)
-
 add_compile_definitions(THIS_PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+
+# test boost.geometry.spatial_indexes.rtree
+#add_compile_definitions(TEST_BOOST_RTREE)
 
 if(TEST_BOOST_RTREE)
 set(Boost_INCLUDE_DIR "..//boost_1_79_0")
