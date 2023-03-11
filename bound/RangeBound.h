@@ -62,8 +62,10 @@ namespace Sindy
 		double m_dMaxY;
 	};
 
+	class Range2d;
 	class SINDY_API RangeItem : public BoundItem
 	{
+		friend Range2d;
 	public:
 		// 这个类是为了让同一Range的起点端、终点端共用同一个Ranges
 		struct Ranges
@@ -74,15 +76,16 @@ namespace Sindy
 		RangeItem(IBoundItem* ipItem, Ranges* pRange, bool isMin, bool isSrc);
 		~RangeItem();
 
-		bool m_isMin; // 起点端标志
+		size_t m_maxValue; // 0为起点端，1为终点端
 		bool m_isSrc; // 源 的标志
 		Ranges* m_pItems; // 范围内的其它Bound
-
-	public:
 
 		// 简化客户代码
 		std::vector<RangeItem*>::iterator begin() { return m_pItems->m_items.begin(); }
 		std::vector<RangeItem*>::iterator end() { return m_pItems->m_items.end(); }
+
+	private:
+		inline double value() const { return m_maxValue ? m_dMaxX : m_dMinX; }
 	};
 
 	class SINDY_API Range2d
@@ -101,7 +104,8 @@ namespace Sindy
 
 	private:
 
-		std::multimap<double, BoundItem*, DoubleLess> m_mapDouble2Item;
+		// std::multimap<double, RangeItem*, DoubleLess> m_mapDouble2Item;
+		std::vector<RangeItem*> m_arrIndex;
 	};
 
 	template<typename Array>

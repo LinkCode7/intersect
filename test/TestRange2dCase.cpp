@@ -57,9 +57,12 @@ int TestRange2dCase::check(const std::vector<BoxInfo>& arrBox, const std::vector
 	return 1;
 }
 
+void testt();
 
 void TestRange2dCase::testIntersect()
 {
+	testt();
+
 	std::vector<BoxInfo> arr = { {{0,0}, {1,1}, "1"} };
 
 	int flag = 1;
@@ -71,4 +74,9 @@ void TestRange2dCase::testIntersect()
 	flag &= check({ {{10,20},{15,30},"1"}, {{3,5},{10,20},"2"} }, { "1-2" }, 0.001);
 	flag &= check({ {{3,5},{10,20},"2"}, {{10,20},{15,30},"1"} }, { }, 0.0);
 	flag &= check({ {{10,20},{15,30},"1"}, {{3,5},{10,20},"2"} }, { "1-2" }, 0.0);
+}
+
+void testt()
+{
+
 }
