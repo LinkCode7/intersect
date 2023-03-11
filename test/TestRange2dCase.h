@@ -1,15 +1,15 @@
 #ifndef TEST_RANGE2D_CASE_H
 #define TEST_RANGE2D_CASE_H
 
-#include "../Common/SindyUtility.h"
-#include "../Range/RangeBound.h"
+#include "../common/SindyUtility.h"
+#include "../bound/RangeBound.h"
 
 namespace TestRange2dCase
 {
 	class LineData2 : public Sindy::TestLineData, public Sindy::IBoundItem
 	{
 	public:
-		LineData2(const Sindy::Point3d& ptMin, const Sindy::Point3d& ptMax, const std::string& handle) 
+		LineData2(const Sindy::Point3d& ptMin, const Sindy::Point3d& ptMax, const std::string& handle)
 		{
 			m_ptBegin = ptMin;
 			m_ptEnd = ptMax;
@@ -35,6 +35,7 @@ namespace TestRange2dCase
 	};
 
 	void entry();
+	void testIntersect();
 
 	int check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol);
 }

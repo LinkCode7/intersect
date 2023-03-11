@@ -1,6 +1,6 @@
 #pragma once
 #include "../SindyGlobal.h"
-#include "../Range/RangeBound.h"
+#include "../bound/RangeBound.h"
 
 namespace TestPerformance
 {

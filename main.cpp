@@ -1,6 +1,6 @@
-#include "./Testing/TestRange2dCase.h"
-#include "./Testing/TestRangeBound.h"
-#include "./Testing/TestBoostRtree.h"
+#include "./test/TestRange2dCase.h"
+#include "./test/TestRangeBound.h"
+#include "./test/TestBoostRtree.h"
 
 int main()
 {

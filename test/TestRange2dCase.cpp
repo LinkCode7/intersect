@@ -1,6 +1,11 @@
 #include "TestRange2dCase.h"
 #include <memory>
 
+void TestRange2dCase::entry()
+{
+	testIntersect();
+}
+
 int TestRange2dCase::check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol)
 {
 	std::vector<std::shared_ptr<LineData2>> arrLineData;
@@ -52,7 +57,8 @@ int TestRange2dCase::check(const std::vector<BoxInfo>& arrBox, const std::vector
 	return 1;
 }
 
-void TestRange2dCase::entry()
+
+void TestRange2dCase::testIntersect()
 {
 	std::vector<BoxInfo> arr = { {{0,0}, {1,1}, "1"} };
 
@@ -61,7 +67,7 @@ void TestRange2dCase::entry()
 	flag &= check({ {{0,0},{1,1},"1"}, {{1,1},{2,2},"2"} }, { "1-2" }, 0.001);
 	flag &= check({ {{0,0},{1,1},"1"}, {{0.99,0.99},{2,2},"2"} }, { "1-2" }, 0.0);
 
-	flag &= check({ {{10,20},{15,30},"1"}, {{3,5},{10.001,20.001},"2"} }, { "1-2"}, 0.0);
+	flag &= check({ {{10,20},{15,30},"1"}, {{3,5},{10.001,20.001},"2"} }, { "1-2" }, 0.0);
 	flag &= check({ {{10,20},{15,30},"1"}, {{3,5},{10,20},"2"} }, { "1-2" }, 0.001);
 	flag &= check({ {{3,5},{10,20},"2"}, {{10,20},{15,30},"1"} }, { }, 0.0);
 	flag &= check({ {{10,20},{15,30},"1"}, {{3,5},{10,20},"2"} }, { "1-2" }, 0.0);

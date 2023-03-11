@@ -7,7 +7,6 @@
 
 namespace Sindy
 {
-	// <
 	struct SINDY_API DoubleLess
 	{
 		inline bool operator()(const double& _Left, const double& _Right) const
@@ -53,7 +52,7 @@ namespace Sindy
 	{
 	public:
 		BoundItem(IBoundItem* ipItem);
-		virtual ~BoundItem();
+		virtual ~BoundItem() = default;
 
 		// 以内嵌的方式包含IBoundItem，方便调用者转换
 		IBoundItem* m_ipItem;
@@ -67,9 +66,8 @@ namespace Sindy
 	{
 	public:
 		// 这个类是为了让同一Range的起点端、终点端共用同一个Ranges
-		class Ranges
+		struct Ranges
 		{
-		public:
 			std::vector<RangeItem*> m_items;  // 这里不释放
 		};
 
@@ -78,40 +76,28 @@ namespace Sindy
 
 		bool m_isMin; // 起点端标志
 		bool m_isSrc; // 源 的标志
-
-		// 范围内的其它Bound
-		Ranges* m_pItems;
+		Ranges* m_pItems; // 范围内的其它Bound
 
 	public:
 
 		// 简化客户代码
-		std::vector<RangeItem*>::iterator Begin() { return m_pItems->m_items.begin(); }
-		std::vector<RangeItem*>::iterator End() { return m_pItems->m_items.end(); }
+		std::vector<RangeItem*>::iterator begin() { return m_pItems->m_items.begin(); }
+		std::vector<RangeItem*>::iterator end() { return m_pItems->m_items.end(); }
 	};
 
-
-	// 获取某个范围内的实体
 	class SINDY_API Range2d
 	{
 	public:
 		~Range2d();
-		void Reset();
+		void reset();
 
 		// 请调用者保证Item唯一性
-		bool setItem(IBoundItem* ipItem, bool isSrc = true, double dTol = 0.0);
+		bool setItem(IBoundItem* ipItem, bool isSrc = true, double tol = 0.0);
 		// 核心函数：获取相交的Item，包括覆盖的情况。只输出源实体相关的Bound，调用者不要释放传出的容器
 		void getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function = compareSrc);
 
-		// 请调用者保证Item唯一性，变体
-		bool setItemMin(IBoundItem* ipItem, double dTol = 0.0);
-		// 获取某个范围内的Item
-		void getSameItem(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol = 1000)const;
-		void getSameItem(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol = 1000)const;
-
-		// 请调用者保证Item唯一性，变体
-		bool setItemMax(IBoundItem* ipItem, double dTol = 0.0);
-		void getIntersectItem2(const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double dTol)const;
-		void getIntersectItem2(const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double dTol = 1000)const;
+		template<typename Array>
+		void setRangeItems(const Array& arr, bool isSrc, double tol);
 
 	private:
 
@@ -119,12 +105,22 @@ namespace Sindy
 	};
 
 	template<typename Array>
-	void setRangeItems(Range2d& range, const Array& arr, bool isSrc, double dTol)
+	void Range2d::setRangeItems(const Array& arr, bool isSrc, double tol)
 	{
 		for (const auto& item : arr)
 		{
-			range.setItem(item, isSrc, dTol);
+			setItem(item, isSrc, tol);
 		}
 	}
+
+	/*
+	* 以下为getIntersectItem的变体
+	*/
+	// 获取某个范围内的Item
+	void getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol = 1.0);
+	void getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double tol = 1.0);
+
+	// 请调用者保证Item唯一性，变体
+	void getIntersectItem2(const std::vector<IBoundItem*>& ipItem, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol = 1.0);
 
 } // namespace Sindy
