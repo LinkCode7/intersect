@@ -102,7 +102,10 @@ namespace Sindy
 		template<typename Array>
 		void setRangeItems(const Array& arr, bool isSrc, double tol);
 
+		std::vector<double> testSortBox();
+
 	private:
+		void sortBox();
 
 		// std::multimap<double, RangeItem*, DoubleLess> m_mapDouble2Item;
 		std::vector<RangeItem*> m_arrIndex;
@@ -112,9 +115,7 @@ namespace Sindy
 	void Range2d::setRangeItems(const Array& arr, bool isSrc, double tol)
 	{
 		for (const auto& item : arr)
-		{
-			setItem(item, isSrc, tol);
-		}
+			setItem(item.get(), isSrc, tol);
 	}
 
 	/*

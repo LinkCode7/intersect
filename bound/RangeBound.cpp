@@ -59,6 +59,11 @@ bool Sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
 		return false;
 	}
 
+#ifdef _DEBUG
+	if (pMinItem->m_dMaxX < pMinItem->m_dMinX || pMinItem->m_dMaxY < pMinItem->m_dMinY)
+		return false; // error:invalid extents
+#endif
+
 	pMinItem->m_dMinX -= tol;
 	pMinItem->m_dMinY -= tol;
 	pMinItem->m_dMaxX += tol;
@@ -80,11 +85,7 @@ bool Sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
 // setItem时要设置误差
 void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function)
 {
-	std::sort(m_arrIndex.begin(), m_arrIndex.end(), [](const auto& left, const auto& right) {
-		if (left->value() == right->value() && left->m_maxValue != right->m_maxValue)
-			return left->m_maxValue > right->m_maxValue;
-		return left->value() < right->value();
-		});
+	sortBox();
 
 	std::multimap<double, BoundItem*, DoubleLess> mapY2Item;
 
@@ -136,6 +137,34 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 			mapY2Item.insert(std::make_pair(pSrcItem->m_dMaxY, pSrcItem));
 		}
 	}
+}
+
+void Sindy::Range2d::sortBox()
+{
+	std::sort(m_arrIndex.begin(), m_arrIndex.end(), [](const auto& left, const auto& right) {
+		if (left->value() == right->value() && left->m_maxValue != right->m_maxValue)
+			return left->m_maxValue < right->m_maxValue;
+		return left->value() < right->value();
+	});
+}
+
+std::vector<double> Sindy::Range2d::testSortBox()
+{
+	sortBox();
+
+	std::vector<double> result;
+	for (const auto& pItem : m_arrIndex)
+	{
+		REGIONID id = 0;
+		if (!pItem->m_ipItem->getId(id))
+			continue; // error
+
+		double value = id;
+		if (pItem->m_maxValue)
+			value += 0.1;
+		result.emplace_back(value);
+	}
+	return result;
 }
 
 void Sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol)

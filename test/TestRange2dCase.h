@@ -23,6 +23,11 @@ namespace TestRange2dCase
 			dMaxY = m_ptEnd.y;
 			return true;
 		}
+		bool getId(REGIONID& id) override
+		{
+			id = std::atoi(m_strId.data());
+			return true;
+		}
 	};
 
 	class BoxInfo
@@ -37,6 +42,9 @@ namespace TestRange2dCase
 	void entry();
 	void testIntersect();
 
+	void testBoundSort();
+
+	std::vector<std::shared_ptr<LineData2>> _makeLineData(const std::vector<BoxInfo>& arrBox);
 	int check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol);
 }
 

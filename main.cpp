@@ -7,8 +7,8 @@ int main()
 	using namespace Sindy;
 	TestRange2dCase::entry();
 
-	return 0;
 	//TestPerformance::testAccuracy(MAKE_SINDY_PATH("TestData.db3"));
+
 	TestPerformance::entry(MAKE_SINDY_PATH("TestData.db3"), MAKE_SINDY_PATH("TestResult.log"));
 
 	TestBoostRtree::entry(MAKE_SINDY_PATH("TestData.db3"), MAKE_SINDY_PATH("TestResult.log"));
