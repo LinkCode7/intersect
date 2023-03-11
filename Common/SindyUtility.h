@@ -3,7 +3,7 @@
 #include <map>
 
 #include "../SindyGlobal.h"
-#include "../SQLite/SindySQLite.h"
+#include "../sqlite/SindySQLite.h"
 
 #ifdef _WIN64
 typedef __int64             SindyLong;

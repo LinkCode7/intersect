@@ -9,8 +9,8 @@
 > 对84834个实体求交 -> 算法3：Range2d 总计：460ms<br>
 > 对84834个实体求交 -> 算法4：boost.geometry.index.rtree 总计：2247ms
 
-3. 为了支持测试，项目中把84834个图形序列化到数据库TestData.db3中，intersect/SQLite/SindySQLite.cpp提供相应的读写函数。
-4. intersect/Common包含了一些计时等工具函数。
+3. 为了支持测试，项目中把84834个图形序列化到数据库TestData.db3中，intersect/sqlite/SindySQLite.cpp提供相应的读写函数。
+4. intersect/common包含了一些计时等工具函数。
 
 ## 算法思路
 1. 每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding是否相交。
