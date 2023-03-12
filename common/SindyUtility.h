@@ -4,6 +4,7 @@
 
 #include "../SindyGlobal.h"
 #include "../sqlite/SindySQLite.h"
+#include "SindyExtents.h"
 
 #ifdef _WIN64
 typedef __int64             SindyLong;
@@ -30,63 +31,9 @@ typedef SindyInt REGIONID;
 #endif
 
 #define SINDY_API
-#define SINDY_DEFAULT_DOUBLE 0.0
 
 namespace Sindy
 {
-	class Point3d
-	{
-	public:
-		Point3d()
-		{
-			x = SINDY_DEFAULT_DOUBLE;
-			y = SINDY_DEFAULT_DOUBLE;
-			z = SINDY_DEFAULT_DOUBLE;
-		}
-		Point3d(const Point3d& pt)
-		{
-			x = pt.x;
-			y = pt.y;
-			z = pt.z;
-		}
-		Point3d(double dX, double dY, double dZ)
-		{
-			x = dX;
-			y = dY;
-			z = dZ;
-		}
-		Point3d(double dX, double dY)
-		{
-			x = dX;
-			y = dY;
-			z = SINDY_DEFAULT_DOUBLE;
-		}
-
-		double x, y, z;
-	};
-
-	class Extents
-	{
-	public:
-		Point3d min() const { return m_min; }
-		Point3d max() const { return m_max; }
-
-		void reset(const Point3d& min, const Point3d& max) { m_min = min; m_max = max; }
-		bool outExtents(const Extents& ext, double tol = 0.0)
-		{
-			if (ext.m_max.x < m_min.x - tol || ext.m_min.x > m_max.x + tol)
-				return true;
-			if (ext.m_max.y < m_min.y - tol || ext.m_min.y > m_max.y + tol)
-				return true;
-			return false;
-		}
-
-	private:
-		Point3d m_min;
-		Point3d m_max;
-	};
-
-
 	inline double getAbs(double dValue)
 	{
 		if (dValue > 0)
@@ -186,7 +133,7 @@ namespace Sindy
 			double dMaxY = 0.0;
 			database.getValueDouble(Sindy::max_y, dMaxY);
 
-			pLineData->m_extents.reset(Sindy::Point3d(dMinX, dMinY, 0.0), Sindy::Point3d(dMaxX, dMaxY, 0.0));
+			pLineData->m_extents = { Sindy::Point3d(dMinX, dMinY, 0.0), Sindy::Point3d(dMaxX, dMaxY, 0.0) };
 
 			vecLineData.push_back(pLineData);
 		}

@@ -113,13 +113,13 @@ void TestPerformance::testRangeBound(const std::vector<TestLineDataBound*>& vecL
 	for (; iter != vecItem.end(); ++iter) // 771ms
 	{
 		RangeItem* pItem = *iter;
-		TestLineDataBound* pSrcLineData = static_cast<TestLineDataBound*>(pItem->m_ipItem);
+		auto pSrcLineData = pItem->cast<TestLineDataBound>();
 
-		std::vector<RangeItem*>::iterator it = pItem->m_pItems->m_items.begin();
-		for (; it != pItem->m_pItems->m_items.end(); ++it)
+		std::vector<RangeItem*>::iterator it = pItem->begin();
+		for (; it != pItem->end(); ++it)
 		{
 			RangeItem* pIntersectItem = *it;
-			TestLineDataBound* pDesLineData = static_cast<TestLineDataBound*>(pIntersectItem->m_ipItem);
+			auto pDesLineData = pIntersectItem->cast<TestLineDataBound>();
 
 			bool isLink = false;
 			if (isSamePt(pSrcLineData->m_ptBegin, pDesLineData->m_ptBegin))
@@ -162,13 +162,13 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 		for (; iter != vecItem.end(); ++iter) // 771ms
 		{
 			RangeItem* pItem = *iter;
-			TestLineDataBound* pSrcLineData = static_cast<TestLineDataBound*>(pItem->m_ipItem);
+			auto pSrcLineData = pItem->cast<TestLineDataBound>();
 
-			std::vector<RangeItem*>::iterator it = pItem->m_pItems->m_items.begin();
-			for (; it != pItem->m_pItems->m_items.end(); ++it)
+			std::vector<RangeItem*>::iterator it = pItem->begin();
+			for (; it != pItem->end(); ++it)
 			{
 				RangeItem* pIntersectItem = *it;
-				TestLineDataBound* pDesLineData = static_cast<TestLineDataBound*>(pIntersectItem->m_ipItem);
+				auto pDesLineData = pIntersectItem->cast<TestLineDataBound>();
 
 				bool isLink = false;
 				if (isSamePt(pSrcLineData->m_ptBegin, pDesLineData->m_ptBegin))

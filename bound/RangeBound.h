@@ -13,7 +13,6 @@ namespace Sindy
 		{
 			if (fabs(_Left - _Right) < ZERO)
 				return false;
-
 			return _Left < _Right;
 		}
 	};
@@ -47,45 +46,50 @@ namespace Sindy
 		virtual bool getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY);
 	};
 
-	// 这个class很像IBoundItem的实例
+	class Range2d;
 	class SINDY_API BoundItem
 	{
+		friend Range2d;
+	protected:
+		// 以内嵌的方式包含IBoundItem，方便调用者转换
+		IBoundItem* m_ipItem;
 	public:
+		double m_minX;
+		double m_minY;
+		double m_maxX;
+		double m_maxY;
+
 		BoundItem(IBoundItem* ipItem);
 		virtual ~BoundItem() = default;
 
-		// 以内嵌的方式包含IBoundItem，方便调用者转换
-		IBoundItem* m_ipItem;
-		double m_dMinX;
-		double m_dMinY;
-		double m_dMaxX;
-		double m_dMaxY;
+		template<typename T>
+		T* cast() const { return static_cast<T*>(m_ipItem); }
+		IBoundItem* boundItem() const { return m_ipItem; }
 	};
 
-	class Range2d;
 	class SINDY_API RangeItem : public BoundItem
 	{
 		friend Range2d;
-	public:
 		// 这个类是为了让同一Range的起点端、终点端共用同一个Ranges
 		struct Ranges
 		{
 			std::vector<RangeItem*> m_items;  // 这里不释放
 		};
 
+		size_t m_maxValue;  // 0为起点端，1为终点端
+		bool m_isSrc;       // 源 的标志
+		Ranges* m_pItems;   // 范围内的其它Bound
+	public:
+
 		RangeItem(IBoundItem* ipItem, Ranges* pRange, bool isMin, bool isSrc);
 		~RangeItem();
 
-		size_t m_maxValue; // 0为起点端，1为终点端
-		bool m_isSrc; // 源 的标志
-		Ranges* m_pItems; // 范围内的其它Bound
-
-		// 简化客户代码
-		std::vector<RangeItem*>::iterator begin() { return m_pItems->m_items.begin(); }
-		std::vector<RangeItem*>::iterator end() { return m_pItems->m_items.end(); }
+		// 简化客户代码，隐藏内部细节
+		inline std::vector<RangeItem*>::iterator begin() const { return m_pItems->m_items.begin(); }
+		inline std::vector<RangeItem*>::iterator end() const { return m_pItems->m_items.end(); }
 
 	private:
-		inline double value() const { return m_maxValue ? m_dMaxX : m_dMinX; }
+		inline double value() const { return m_maxValue ? m_maxX : m_minX; }
 	};
 
 	class SINDY_API Range2d
@@ -100,23 +104,18 @@ namespace Sindy
 		void getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function = compareSrc);
 
 		template<typename Array>
-		void setRangeItems(const Array& arr, bool isSrc, double tol);
+		void setRangeItems(const Array& arr, bool isSrc, double tol = 0.0) {
+			for (const auto& item : arr)
+				setItem(item.get(), isSrc, tol);
+		}
 
 		std::vector<double> testSortBox();
 
 	private:
 		void sortBox();
-
-		// std::multimap<double, RangeItem*, DoubleLess> m_mapDouble2Item;
 		std::vector<RangeItem*> m_arrIndex;
+		// std::multimap<double, RangeItem*, DoubleLess> m_mapDouble2Item;
 	};
-
-	template<typename Array>
-	void Range2d::setRangeItems(const Array& arr, bool isSrc, double tol)
-	{
-		for (const auto& item : arr)
-			setItem(item.get(), isSrc, tol);
-	}
 
 	/*
 	* 以下为getIntersectItem的变体

@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.12)
 project(intersect)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 
 add_compile_definitions(THIS_PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
 # test boost.geometry.spatial_indexes.rtree
-set(TEST_BOOST_RTREE ON)
+set(TEST_BOOST_RTREE OFF)
 
 if(TEST_BOOST_RTREE)
 set(Boost_INCLUDE_DIR "..//boost_1_79_0")

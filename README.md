@@ -13,168 +13,17 @@
 4. intersect/common包含了一些计时等工具函数。
 
 ## 算法思路
-1. 每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding是否相交。
+1. 在计算几何中，每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding是否相交。
 2. Bounding相交可以用排斥的思路快速求出，你可以很容易实现下面的Extents类，注意inExtents、outExtents函数，最佳情况下只需要一次浮点数比较就能判断两个图形是否相交，这里的“快速排斥思想”是判断两个图形是否相交的基础。
 ```cpp
-// MyExtents.h
-#include <initializer_list>
-
-#define MY_ZERO 0.00001  // 1e-5
-
-class MyPoint
-{
-public:
-    double x;
-    double y;
-};
-
-// 用一个最小的平行于坐标轴的矩形来框住几何体：Minimum Bounding Box
-class MyExtents
-{
-    MyPoint m_min;
-    MyPoint m_max;
-
-public:
-    MyExtents();
-    MyExtents(const MyPoint& pt);
-    explicit MyExtents(const std::initializer_list<MyPoint>& list);
-    void           set(const MyPoint& ptMin, const MyPoint& ptMax);
-    inline MyPoint min() const { return m_min; }
-    inline MyPoint max() const { return m_max; }
-
-    void    reset();
-    bool    invalid();
-    MyPoint centerPt() const;
-    void    expand(double value);  // 扩大或缩小(负数)包络
-    void    moveTo(const MyPoint& ptNewCenter);
-
-    void addPoint(const MyPoint& pt);
-    void addExtents(const MyExtents& ext);
-    void operator+=(const MyExtents& ext);
-    bool inExtents(const MyPoint& pt, double tol = MY_ZERO) const;
-    bool outExtents(const MyPoint& pt, double tol = MY_ZERO) const;
-    bool outExtents(const MyExtents& ext, double tol = MY_ZERO) const;
-};
-```
-```cpp
-// MyExtents.cpp
-#include "MyExtents.h"
-#include "float.h"
-
-#define MY_EXTENTS_MAX -DBL_MAX
-#define MY_EXTENTS_MIN DBL_MAX
-
-bool compareDouble(double value1, double value2, double tol = MY_ZERO)
-{
-    double sub = value1 - value2;
-    if (sub < 0)
-        sub = -sub;
-
-    if (sub <= tol)
-        return true;
-    return false;
-}
-
-MyExtents::MyExtents() : m_min{ MY_EXTENTS_MIN, MY_EXTENTS_MIN }, m_max{ MY_EXTENTS_MAX, MY_EXTENTS_MAX } {}
-MyExtents::MyExtents(const MyPoint& pt) : m_min(pt), m_max(pt) {}
-MyExtents::MyExtents(const std::initializer_list<MyPoint>& list)
-    : m_min{ MY_EXTENTS_MIN, MY_EXTENTS_MIN }
-    , m_max{ MY_EXTENTS_MAX, MY_EXTENTS_MAX }
-{
-    for (const auto& point : list)
-        addPoint(point);
-}
-
-
-void MyExtents::reset()
-{
-    m_min = { MY_EXTENTS_MIN, MY_EXTENTS_MIN };
-    m_max = { MY_EXTENTS_MAX, MY_EXTENTS_MAX };
-}
-void MyExtents::set(const MyPoint& ptMin, const MyPoint& ptMax)
-{
-    m_min = ptMin;
-    m_max = ptMax;
-}
-
-bool MyExtents::invalid()
-{
-    if (compareDouble(m_min.x, MY_EXTENTS_MIN) && compareDouble(m_min.y, MY_EXTENTS_MIN) &&
-        compareDouble(m_max.x, MY_EXTENTS_MAX) && compareDouble(m_max.y, MY_EXTENTS_MAX))
-        return true;
-    return false;
-}
-void MyExtents::addPoint(const MyPoint& pt)
-{
-    if (pt.x < m_min.x)
-        m_min.x = pt.x;
-    if (pt.x > m_max.x)
-        m_max.x = pt.x;
-
-    if (pt.y < m_min.y)
-        m_min.y = pt.y;
-    if (pt.y > m_max.y)
-        m_max.y = pt.y;
-}
-void MyExtents::addExtents(const MyExtents& ext)
-{
-    addPoint(ext.m_min);
-    addPoint(ext.m_max);
-}
-void MyExtents::operator+=(const MyExtents& ext)
-{
-    addPoint(ext.m_min);
-    addPoint(ext.m_max);
-}
-
-bool MyExtents::inExtents(const MyPoint& pt, double tol) const
-{
-    if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
-        return false;
-    if (pt.y < m_min.y - tol || pt.y > m_max.y + tol)
-        return false;
-    return true;
-}
-bool MyExtents::outExtents(const MyPoint& pt, double tol) const
+// SindyExtents.cpp
+bool Extents::outExtents(const Point3d& pt, double tol) const
 {
     if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
         return true;
     if (pt.y < m_min.y - tol || pt.y > m_max.y + tol)
         return true;
     return false;
-}
-bool MyExtents::outExtents(const MyExtents& ext, double tol) const
-{
-    if (ext.m_max.x < m_min.x - tol || ext.m_min.x > m_max.x + tol)
-        return true;
-    if (ext.m_max.y < m_min.y - tol || ext.m_min.y > m_max.y + tol)
-        return true;
-    return false;
-}
-
-void MyExtents::expand(double value)
-{
-    m_min.x -= value;
-    m_min.y -= value;
-    m_max.x += value;
-    m_max.y += value;
-}
-
-void MyExtents::moveTo(const MyPoint& ptNewCenter)
-{
-    MyPoint ptCurCenter{ (double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5)) };
-    double   offsetX = ptNewCenter.x - ptCurCenter.x;
-    double   offsetY = ptNewCenter.y - ptCurCenter.y;
-    m_min.x += offsetX;
-    m_min.y += offsetY;
-    m_max.x += offsetX;
-    m_max.y += offsetY;
-}
-
-MyPoint MyExtents::centerPt() const
-{
-    MyPoint pt{ (double(m_max.x * 0.5) + double(m_min.x * 0.5)), double((m_max.y * 0.5) + double(m_min.y * 0.5)) };
-    return pt;
 }
 ```
 3. 把计算几何中快速排斥的思想和排序算法相结合，就可以更快速地查询图形的相交情况，这是本算法的核心思想。
@@ -187,3 +36,8 @@ MyPoint MyExtents::centerPt() const
 ## 使用
 1. 为了支持业务扩展，使用者需要把每个待计算的图形或图形数据类继承自IBoundItem，并至少重写getExtents函数，该函数用于获取图形的Bounding，这是必须的。getId可以返回某种标记，可以是数组索引、图形ID等，当你需要一个额外的值时。
 2. 具体用法请参考测试代码。
+
+## 构建
+1. 本项目采用[CMake](https://cmake.org/)构建，CMake支持跨平台构建，几乎所有主流IDE都支持它，且不受IDE本身的版本影响。
+2. 为了更高效地完成编码，项目内的使用了部分C++11的语法（特别是在测试用例中），如果您目前还在使用C++98标准，需要根据编译器提示做一些简单的等价替换。
+3. 为了对比测试性能，项目中使用了boost.geometry库，但并未开启该部分测试代码。如要开启，请在CMakeLists中提供编译好的头文件、库路径。

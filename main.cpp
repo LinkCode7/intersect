@@ -4,7 +4,6 @@
 
 int main()
 {
-	using namespace Sindy;
 	TestRange2dCase::entry();
 
 	//TestPerformance::testAccuracy(MAKE_SINDY_PATH("TestData.db3"));

@@ -12,10 +12,10 @@ bool Sindy::IBoundItem::getExtents(double& dMinX, double& dMinY, double& dMaxX, 
 
 Sindy::BoundItem::BoundItem(IBoundItem* ipItem) :
 	m_ipItem(ipItem),
-	m_dMinX(0.0),
-	m_dMinY(0.0),
-	m_dMaxX(0.0),
-	m_dMaxY(0.0)
+	m_minX(0.0),
+	m_minY(0.0),
+	m_maxX(0.0),
+	m_maxY(0.0)
 {
 }
 
@@ -52,7 +52,7 @@ bool Sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
 
 	RangeItem::Ranges* pRange = new(RangeItem::Ranges);
 	RangeItem* pMinItem = new RangeItem(ipItem, pRange, true, isSrc);
-	if (!ipItem->getExtents(pMinItem->m_dMinX, pMinItem->m_dMinY, pMinItem->m_dMaxX, pMinItem->m_dMaxY))
+	if (!ipItem->getExtents(pMinItem->m_minX, pMinItem->m_minY, pMinItem->m_maxX, pMinItem->m_maxY))
 	{
 		delete pMinItem;
 		delete pRange;
@@ -60,24 +60,24 @@ bool Sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
 	}
 
 #ifdef _DEBUG
-	if (pMinItem->m_dMaxX < pMinItem->m_dMinX || pMinItem->m_dMaxY < pMinItem->m_dMinY)
+	if (pMinItem->m_maxX < pMinItem->m_minX || pMinItem->m_maxY < pMinItem->m_minY)
 		return false; // error:invalid extents
 #endif
 
-	pMinItem->m_dMinX -= tol;
-	pMinItem->m_dMinY -= tol;
-	pMinItem->m_dMaxX += tol;
-	pMinItem->m_dMaxY += tol;
+	pMinItem->m_minX -= tol;
+	pMinItem->m_minY -= tol;
+	pMinItem->m_maxX += tol;
+	pMinItem->m_maxY += tol;
 	m_arrIndex.emplace_back(pMinItem);
-	//m_mapDouble2Item.insert(std::make_pair(pMinItem->m_dMinX, pMinItem));
+	//m_mapDouble2Item.insert(std::make_pair(pMinItem->m_minX, pMinItem));
 
 	RangeItem* pMaxItem = new RangeItem(ipItem, pRange, false, isSrc);
-	pMaxItem->m_dMinX = pMinItem->m_dMinX;
-	pMaxItem->m_dMinY = pMinItem->m_dMinY;
-	pMaxItem->m_dMaxX = pMinItem->m_dMaxX;
-	pMaxItem->m_dMaxY = pMinItem->m_dMaxY;
+	pMaxItem->m_minX = pMinItem->m_minX;
+	pMaxItem->m_minY = pMinItem->m_minY;
+	pMaxItem->m_maxX = pMinItem->m_maxX;
+	pMaxItem->m_maxY = pMinItem->m_maxY;
 	m_arrIndex.emplace_back(pMaxItem);
-	//m_mapDouble2Item.insert(std::make_pair(pMinItem->m_dMaxX, pMaxItem));
+	//m_mapDouble2Item.insert(std::make_pair(pMinItem->m_maxX, pMaxItem));
 
 	return true;
 }
@@ -97,7 +97,7 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 		if (pSrcItem->m_maxValue) // 最大点
 		{
 			// 取到当前Y
-			PairMapIter pairIter = mapY2Item.equal_range(pSrcItem->m_dMaxY);
+			PairMapIter pairIter = mapY2Item.equal_range(pSrcItem->m_maxY);
 
 			while (pairIter.first != pairIter.second)
 			{
@@ -117,7 +117,7 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 		else // 最小点
 		{
 			// map.Max.y >= src.Min.y 为了支持完全覆盖的情况
-			std::multimap<double, BoundItem*, DoubleLess>::iterator it = mapY2Item.lower_bound(pSrcItem->m_dMinY);
+			std::multimap<double, BoundItem*, DoubleLess>::iterator it = mapY2Item.lower_bound(pSrcItem->m_minY);
 
 			for (; it != mapY2Item.end(); ++it)
 			{
@@ -126,7 +126,7 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 				if (!function(pSrcItem->m_isSrc, pDestItem->m_isSrc))
 					continue;
 
-				if (pDestItem->m_dMinY <= pSrcItem->m_dMaxY)
+				if (pDestItem->m_minY <= pSrcItem->m_maxY)
 				{
 					pSrcItem->m_pItems->m_items.push_back(pDestItem);
 					pDestItem->m_pItems->m_items.push_back(pSrcItem);
@@ -134,7 +134,7 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 			}
 
 			// 此容器的Key是MaxY
-			mapY2Item.insert(std::make_pair(pSrcItem->m_dMaxY, pSrcItem));
+			mapY2Item.insert(std::make_pair(pSrcItem->m_maxY, pSrcItem));
 		}
 	}
 }
@@ -177,17 +177,17 @@ void Sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& pt
 			continue;
 
 		BoundItem* pItem = new BoundItem(ipItem);
-		if (!ipItem->getExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
+		if (!ipItem->getExtents(pItem->m_minX, pItem->m_minY, pItem->m_maxX, pItem->m_maxY))
 		{
 			delete pItem;
 			continue;
 		}
 
-		pItem->m_dMinX -= tol;
-		pItem->m_dMinY -= tol;
-		pItem->m_dMaxX += tol;
-		pItem->m_dMaxY += tol;
-		mapDouble2Item.insert(std::make_pair(pItem->m_dMinX, pItem)); // Min.X
+		pItem->m_minX -= tol;
+		pItem->m_minY -= tol;
+		pItem->m_maxX += tol;
+		pItem->m_maxY += tol;
+		mapDouble2Item.insert(std::make_pair(pItem->m_minX, pItem)); // Min.X
 	}
 
 	double dLeft = ptMin.x - tol;
@@ -203,14 +203,14 @@ void Sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& pt
 		if (iter->first > dRight)
 			break;
 
-		if (iter->second->m_dMaxX > dRight)
+		if (iter->second->m_maxX > dRight)
 			continue;
 
-		if (iter->second->m_dMaxY < dDown || iter->second->m_dMinY > dUp)
+		if (iter->second->m_maxY < dDown || iter->second->m_minY > dUp)
 			continue;
 
 		// 这里可能会进入两次
-		setRepeat.insert(iter->second->m_ipItem);
+		setRepeat.insert(iter->second->boundItem());
 	}
 }
 
@@ -229,17 +229,17 @@ void Sindy::getIntersectItem2(const std::vector<IBoundItem*>& items, const Point
 			continue;
 
 		BoundItem* pItem = new BoundItem(ipItem);
-		if (!ipItem->getExtents(pItem->m_dMinX, pItem->m_dMinY, pItem->m_dMaxX, pItem->m_dMaxY))
+		if (!ipItem->getExtents(pItem->m_minX, pItem->m_minY, pItem->m_maxX, pItem->m_maxY))
 		{
 			delete pItem;
 			continue;
 		}
 
-		pItem->m_dMinX -= tol;
-		pItem->m_dMinY -= tol;
-		pItem->m_dMaxX += tol;
-		pItem->m_dMaxY += tol;
-		mapDouble2Item.insert(std::make_pair(pItem->m_dMaxX, pItem)); // Max.X
+		pItem->m_minX -= tol;
+		pItem->m_minY -= tol;
+		pItem->m_maxX += tol;
+		pItem->m_maxY += tol;
+		mapDouble2Item.insert(std::make_pair(pItem->m_maxX, pItem)); // Max.X
 	}
 
 
@@ -251,14 +251,14 @@ void Sindy::getIntersectItem2(const std::vector<IBoundItem*>& items, const Point
 	std::multimap<double, BoundItem*, DoubleLess>::const_iterator iter = mapDouble2Item.lower_bound(dLeft);
 	for (; iter != mapDouble2Item.end(); ++iter)
 	{
-		if (iter->second->m_dMinX > dRight)
+		if (iter->second->m_minX > dRight)
 			continue;
 
-		//if(iter->second->m_dMaxY >= dDown && iter->second->m_dMinY <= dUp)
-		if (iter->second->m_dMinY > dUp || iter->second->m_dMaxY < dDown)
+		//if(iter->second->m_maxY >= dDown && iter->second->m_minY <= dUp)
+		if (iter->second->m_minY > dUp || iter->second->m_maxY < dDown)
 			continue;
 
 		// 这里可能会进入两次
-		setRepeat.insert(iter->second->m_ipItem);
+		setRepeat.insert(iter->second->boundItem());
 	}
 }

@@ -41,11 +41,11 @@ namespace TestRange2dCase
 
 	void entry();
 	void testIntersect();
-
 	void testBoundSort();
+	void testSrcDes();
 
 	std::vector<std::shared_ptr<LineData2>> _makeLineData(const std::vector<BoxInfo>& arrBox);
-	int check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol);
+	int check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol = 0.0);
 }
 
 #endif // !TEST_RANGE2D_CASE_H
