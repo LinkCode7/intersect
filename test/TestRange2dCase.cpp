@@ -6,6 +6,8 @@ void TestRange2dCase::entry()
 {
 	testBoundSort();
 	testIntersect();
+
+	testSrcDes();
 }
 
 std::vector<std::shared_ptr<TestRange2dCase::LineData2>> TestRange2dCase::_makeLineData(const std::vector<BoxInfo>& arrBox)
@@ -181,6 +183,11 @@ void TestRange2dCase::testBoundSort()
 
 void TestRange2dCase::testSrcDes()
 {
+	/*
+	* 特定场景下的使用方法：
+	* 假定一张地图下有10万栋楼、1000个便利店，要想知道哪些楼下开了便利店（建立便利店和楼的关系）
+	* 此时将srcBox设为数量较少的便利店，desBox设为数量较大的楼，来求两类实体的关联，速度会更快。
+	*/
 	std::vector<BoxInfo> srcBox;
 	auto srcLineData = _makeLineData(srcBox);
 
@@ -188,7 +195,7 @@ void TestRange2dCase::testSrcDes()
 	auto desLineData = _makeLineData(desBox);
 
 	Sindy::Range2d range;
-	range.setRangeItems(srcLineData, true, 10.0);
+	range.setRangeItems(srcLineData, true, 10.0);  // 设为源实体
 	range.setRangeItems(desLineData, false);
 
 	std::vector<Sindy::RangeItem*> vecItem;

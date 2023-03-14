@@ -34,7 +34,7 @@ namespace Sindy
 		inline Point3d max() const { return m_max; }
 
 		void    reset();
-		bool    invalid();
+		bool    invalid() const;
 		Point3d centerPt() const;
 		void    expand(double value);  // 扩大或缩小(负数)包络
 		void    moveTo(const Point3d& ptNewCenter);

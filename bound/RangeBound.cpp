@@ -141,6 +141,8 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 
 void Sindy::Range2d::sortBox()
 {
+	// 从小到大排序，当值相等时，最大点的X对应的item 排在 最小点的X对应的item 之前，
+	// 这是为了把仅在边界相交的两个box放到结果集中，而不依赖放进容器中的顺序，也是不用multimap的理由
 	std::sort(m_arrIndex.begin(), m_arrIndex.end(), [](const auto& left, const auto& right) {
 		if (left->value() == right->value() && left->m_maxValue != right->m_maxValue)
 			return left->m_maxValue < right->m_maxValue;

@@ -14,20 +14,22 @@
 
 ## 算法思路
 1. 在计算几何中，每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding是否相交。
-2. Bounding相交可以用排斥的思路快速求出，你可以很容易实现下面的Extents类，注意inExtents、outExtents函数，最佳情况下只需要一次浮点数比较就能判断两个图形是否相交，这里的“快速排斥思想”是判断两个图形是否相交的基础。
+2. Bounding相交可以用排斥的思路快速求出，请注意下面的outExtents函数，最佳情况下只需要一次浮点数比较就能判断两个图形是否相交，这里的“快速排斥思想”是判断两个图形是否相交的基础。
 ```cpp
 // SindyExtents.cpp
-bool Extents::outExtents(const Point3d& pt, double tol) const
+bool Extents::outExtents(const Extents& ext, double tol) const
 {
-    if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
+    if (ext.m_max.x < m_min.x - tol || ext.m_min.x > m_max.x + tol)
         return true;
-    if (pt.y < m_min.y - tol || pt.y > m_max.y + tol)
+    if (ext.m_max.y < m_min.y - tol || ext.m_min.y > m_max.y + tol)
+        return true;
+    if (ext.m_max.z < m_min.z - tol || ext.m_min.z > m_max.z + tol)
         return true;
     return false;
 }
 ```
 3. 把计算几何中快速排斥的思想和排序算法相结合，就可以更快速地查询图形的相交情况，这是本算法的核心思想。
-4. 用户通过Sindy::Range2d启动算法，把每个Bounding的最小点、最大点的X值分别创建item放进std::multimap中，算法启动时，会先创建Y方向的临时容器std::multimap，而后从小到大遍历X轴的容器。
+4. 用户通过Sindy::Range2d使用该算法，把每个Bounding的最小点、最大点的X值分别创建节点对象放进std::vector中，算法启动时，会先对std::vector中的元素按X值从小到大排序，再创建Y方向的临时容器std::multimap，而后从小到大遍历所有Bounding的X值。
 5. 当遍历到某个item的最小点时，与此图形相交的其它图形开始创建两两关联，请注意mapY2Item.lower_bound(pSrcItem->m_dMinY)，此时不会找到min.x大于item.min.x的目标图形，但是后续遍历到目标图形时仍然会正确地创建两者的关联。
 6. 当遍历到item的最大点时，与此图形相交的其它图形都找完了，所以把所有Y值为item.max.y的图形从mapY2Item中移除。
 7. 请注意，这里是关键点：遍历到最小点时，会将item的最大点的Y值放进临时容器（请思考为什么是max.y）；遍历到最大点时，会将当前的max.y从临时容器移除。

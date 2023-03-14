@@ -100,7 +100,7 @@ namespace Sindy
 
 		// 请调用者保证Item唯一性
 		bool setItem(IBoundItem* ipItem, bool isSrc = true, double tol = 0.0);
-		// 核心函数：获取相交的Item，包括覆盖的情况。只输出源实体相关的Bound，调用者不要释放传出的容器
+		// 获取相交的Item，注意只输出源实体相关的RangeItem，调用者不要释放传出的容器
 		void getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function = compareSrc);
 
 		template<typename Array>
