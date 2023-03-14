@@ -50,7 +50,7 @@ void TestPerformance::testFor(const std::vector<TestLineDataBound*>& vecLineData
 	time.addTimePoint("");
 
 	std::ostringstream oss;
-	oss << "对" << vecLineData.size() << "个实体求交 -> 算法1：暴力遍历";
+	oss << "对" << vecLineData.size() << "个实体求交 -> 暴力遍历";
 	std::string strText = oss.str();
 
 	time.write(strLogPath, strText);
@@ -89,7 +89,7 @@ void TestPerformance::testOutOf(const std::vector<TestLineDataBound*>& vecLineDa
 	time.addTimePoint("");
 
 	std::ostringstream oss;
-	oss << "对" << vecLineData.size() << "个实体求交 -> 算法2：外包排斥";
+	oss << "对" << vecLineData.size() << "个实体求交 -> 外包排斥";
 	std::string strText = oss.str();
 
 	time.write(strLogPath, strText);
@@ -136,7 +136,7 @@ void TestPerformance::testRangeBound(const std::vector<TestLineDataBound*>& vecL
 	time.addTimePoint("");
 
 	std::ostringstream oss;
-	oss << "对" << vecLineData.size() << "个实体求交 -> 算法3：Range2d";
+	oss << "对" << vecLineData.size() << "个实体求交 -> Range2d";
 	std::string strText = oss.str();
 
 	// LOG_FILE_PATH

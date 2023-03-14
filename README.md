@@ -4,10 +4,10 @@
 ## 组成
 1. 算法核心在intersect/bound/RangeBound.cpp中。
 2. 测试代码在intersect/test中，包含准确性测试、性能测试，测试结果会打印在TestResult.log中，如：
-> 对84834个实体求交 -> 算法1：暴力遍历 总计：53910ms<br>
-> 对84834个实体求交 -> 算法2：外包排斥 总计：12973ms<br>
-> 对84834个实体求交 -> 算法3：Range2d 总计：460ms<br>
-> 对84834个实体求交 -> 算法4：boost.geometry.index.rtree 总计：2247ms
+>对84834个实体求交 -> 暴力遍历 总计：37997ms<br>
+>对84834个实体求交 -> 外包排斥 总计：11491ms<br>
+>对84834个实体求交 -> Range2d 总计：200ms<br>
+>对84834个实体求交 -> boost.geometry.index.rtree-Packing 总计：589ms
 
 3. 为了支持测试，项目中把84834个图形序列化到数据库TestData.db3中，intersect/sqlite/SindySQLite.cpp提供相应的读写函数。
 4. intersect/common包含了一些计时等工具函数。

@@ -30,12 +30,12 @@ void TestBoostRtree::entry(const PString& strDbPath, const PString& strLogPath)
 	std::vector<TestLineData*> arrLineData;
 	unSerializePoints(strDbPath, arrLineData);
 
-	//queryOfpack(arrLineData, strDbPath, strLogPath);
+	queryOfPacking(arrLineData, strDbPath, strLogPath);
 
 	quickStart(arrLineData, strDbPath, strLogPath);
 }
 
-void TestBoostRtree::queryOfpack(const std::vector<Sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
+void TestBoostRtree::queryOfPacking(const std::vector<Sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
 {
 #ifdef TEST_BOOST_RTREE
 	using namespace Sindy;
@@ -67,7 +67,7 @@ void TestBoostRtree::queryOfpack(const std::vector<Sindy::TestLineData*>& arrLin
 	time.addTimePoint("");
 
 	std::ostringstream oss;
-	oss << "对" << arrLineData.size() << "个实体求交 -> 算法4：boost.geometry.index.rtree-pack";
+	oss << "对" << arrLineData.size() << "个实体求交 -> boost.geometry.index.rtree-Packing";
 	std::string strText = oss.str();
 
 	time.write(strLogPath, strText);
@@ -111,7 +111,7 @@ void TestBoostRtree::quickStart(const std::vector<Sindy::TestLineData*>& arrLine
 	time.addTimePoint("");
 
 	std::ostringstream oss;
-	oss << "对" << arrLineData.size() << "个实体求交 -> 算法4：boost.geometry.index.rtree";
+	oss << "对" << arrLineData.size() << "个实体求交 -> boost.geometry.index.rtree-QuickStart";
 	std::string strText = oss.str();
 
 	time.write(strLogPath, strText);

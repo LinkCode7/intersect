@@ -1,9 +1,11 @@
-# 测试机器配置 -> 处理器：AMD Ryzen 9 7950X 16-Core Processor 4.50 GHz
+# 测试机器处理器配置：AMD Ryzen 9 7950X 16-Core Processor 4.50 GHz，没有做代码编译上的优化
 
-对84834个实体求交 -> 算法1：暴力遍历 总计：53910ms
+对84834个实体求交 -> 暴力遍历 总计：37997ms
 
-对84834个实体求交 -> 算法2：外包排斥 总计：12973ms
+对84834个实体求交 -> 外包排斥 总计：11491ms
 
-对84834个实体求交 -> 算法3：Range2d 总计：460ms
+对84834个实体求交 -> Range2d 总计：200ms
 
-对84834个实体求交 -> 算法4：boost.geometry.index.rtree 总计：2247ms
+对84834个实体求交 -> boost.geometry.index.rtree-Packing 总计：589ms
+
+对84834个实体求交 -> boost.geometry.index.rtree-QuickStart 总计：2213ms
