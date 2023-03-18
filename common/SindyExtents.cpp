@@ -32,6 +32,12 @@ namespace Sindy
 		m_min = { MY_EXTENTS_MIN, MY_EXTENTS_MIN, MY_EXTENTS_MIN };
 		m_max = { MY_EXTENTS_MAX, MY_EXTENTS_MAX, MY_EXTENTS_MAX };
 	}
+	void Extents::reset(const Point3d& pt1, const Point3d& pt2)
+	{
+		m_min = pt1;
+		m_max = pt1;
+		addPoint(pt2);
+	}
 	void Extents::set(const Point3d& ptMin, const Point3d& ptMax)
 	{
 		m_min = ptMin;
@@ -74,6 +80,16 @@ namespace Sindy
 		addPoint(ext.m_max);
 	}
 
+	bool Extents::inExtents(const Point3d& pt) const
+	{
+		if (pt.x < m_min.x || pt.x > m_max.x)
+			return false;
+		if (pt.y < m_min.y || pt.y > m_max.y)
+			return false;
+		if (pt.z < m_min.z || pt.z > m_max.z)
+			return false;
+		return true;
+	}
 	bool Extents::inExtents(const Point3d& pt, double tol) const
 	{
 		if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
@@ -84,6 +100,16 @@ namespace Sindy
 			return false;
 		return true;
 	}
+	bool Extents::outExtents(const Point3d& pt) const
+	{
+		if (pt.x < m_min.x || pt.x > m_max.x)
+			return true;
+		if (pt.y < m_min.y || pt.y > m_max.y)
+			return true;
+		if (pt.z < m_min.z || pt.z > m_max.z)
+			return true;
+		return false;
+	}
 	bool Extents::outExtents(const Point3d& pt, double tol) const
 	{
 		if (pt.x < m_min.x - tol || pt.x > m_max.x + tol)
@@ -91,6 +117,16 @@ namespace Sindy
 		if (pt.y < m_min.y - tol || pt.y > m_max.y + tol)
 			return true;
 		if (pt.z < m_min.z - tol || pt.z > m_max.z + tol)
+			return true;
+		return false;
+	}
+	bool Extents::outExtents(const Extents& ext) const
+	{
+		if (ext.m_max.x < m_min.x || ext.m_min.x > m_max.x)
+			return true;
+		if (ext.m_max.y < m_min.y || ext.m_min.y > m_max.y)
+			return true;
+		if (ext.m_max.z < m_min.z || ext.m_min.z > m_max.z)
 			return true;
 		return false;
 	}

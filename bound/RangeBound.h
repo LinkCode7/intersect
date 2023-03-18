@@ -2,7 +2,7 @@
 #include "../SindyGlobal.h"
 #include "../Common/SindyUtility.h"
 
-#define ZERO 0.000001
+#define SINDY_ZERO 0.0000001
 #define UNKNOWN_REGION_ID -999999
 
 namespace Sindy
@@ -11,7 +11,7 @@ namespace Sindy
 	{
 		inline bool operator()(const double& _Left, const double& _Right) const
 		{
-			if (fabs(_Left - _Right) < ZERO)
+			if (fabs(_Left - _Right) < SINDY_ZERO)
 				return false;
 			return _Left < _Right;
 		}

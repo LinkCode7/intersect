@@ -34,6 +34,7 @@ namespace Sindy
 		inline Point3d max() const { return m_max; }
 
 		void    reset();
+		void	reset(const Point3d& pt1, const Point3d& pt2);
 		bool    invalid() const;
 		Point3d centerPt() const;
 		void    expand(double value);  // 扩大或缩小(负数)包络
@@ -42,9 +43,12 @@ namespace Sindy
 		void addPoint(const Point3d& pt);
 		void addExtents(const Extents& ext);
 		void operator+=(const Extents& ext);
-		bool inExtents(const Point3d& pt, double tol = SINDY_ZERO) const;
-		bool outExtents(const Point3d& pt, double tol = SINDY_ZERO) const;
-		bool outExtents(const Extents& ext, double tol = SINDY_ZERO) const;
+		bool inExtents(const Point3d& pt) const;
+		bool inExtents(const Point3d& pt, double tol) const;
+		bool outExtents(const Point3d& pt) const;
+		bool outExtents(const Point3d& pt, double tol) const;
+		bool outExtents(const Extents& ext) const;
+		bool outExtents(const Extents& ext, double tol) const;
 	};
 
 } // namespace Sindy
