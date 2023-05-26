@@ -13,8 +13,8 @@
 4. intersect/common包含了一些计时等工具函数。
 
 ## 算法思路
-1. 在计算几何中，每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding范围内是否相交。
-2. Bounding相交可以用快速排斥的思想求出，请注意下面的outExtents函数，最佳情况下只需要一次浮点数比较就能判断Bounding是否相交。
+- 在计算几何中，每个图形都有一个外接矩形：Bounding，图形是否相交可以先判断Bounding范围内是否相交。
+- Bounding相交可以用快速排斥的思想求出，请注意下面的outExtents函数，最佳情况下只需要一次浮点数比较就能判断Bounding是否相交。
 ```cpp
 // SindyExtents.cpp
 bool Extents::outExtents(const Extents& ext, double tol) const

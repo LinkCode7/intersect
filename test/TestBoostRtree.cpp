@@ -1,7 +1,7 @@
 #include "TestBoostRtree.h"
 
-#include "../Common/SindyUtility.h"
 #include "../Common/SindyRunTime.h"
+#include "../Common/SindyUtility.h"
 
 // to store queries results
 #include <vector>
@@ -9,111 +9,109 @@
 #include <iostream>
 
 #ifdef TEST_BOOST_RTREE
-#include <sstream>
-#include <codecvt>
+    #include <boost/foreach.hpp>
+    #include <boost/geometry.hpp>
+    #include <boost/geometry/geometries/box.hpp>
+    #include <boost/geometry/geometries/point.hpp>
+    #include <boost/geometry/index/rtree.hpp>
+    #include <codecvt>
+    #include <sstream>
 
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/point.hpp>
-#include <boost/geometry/geometries/box.hpp>
-
-#include <boost/geometry/index/rtree.hpp>
-
-#include <boost/foreach.hpp>
-
-namespace bg = boost::geometry;
+namespace bg  = boost::geometry;
 namespace bgi = boost::geometry::index;
 #endif
 
 void TestBoostRtree::entry(const PString& strDbPath, const PString& strLogPath)
 {
-	using namespace sindy;
-	std::vector<TestLineData*> arrLineData;
-	unSerializePoints(strDbPath, arrLineData);
+    using namespace sindy;
+    std::vector<TestLineData*> arrLineData;
+    unSerializePoints(strDbPath, arrLineData);
 
-	queryOfPacking(arrLineData, strDbPath, strLogPath);
+    queryOfPacking(arrLineData, strDbPath, strLogPath);
 
-	quickStart(arrLineData, strDbPath, strLogPath);
+    quickStart(arrLineData, strDbPath, strLogPath);
 }
 
-void TestBoostRtree::queryOfPacking(const std::vector<sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
+void TestBoostRtree::queryOfPacking(const std::vector<sindy::TestLineData*>& arrLineData, const PString& strDbPath,
+                                    const PString& strLogPath)
 {
 #ifdef TEST_BOOST_RTREE
-	using namespace sindy;
+    using namespace sindy;
 
-	typedef bg::model::point<int, 2, bg::cs::cartesian> point;
-	typedef bg::model::box<point> box;
-	typedef std::pair<box, unsigned> value;
+    typedef bg::model::point<int, 2, bg::cs::cartesian> point;
+    typedef bg::model::box<point>                       box;
+    typedef std::pair<box, unsigned>                    value;
 
-	RunTime time;
+    RunTime time;
 
-	size_t id_gen = 0;
-	std::vector<value> cloud;
-	for (const auto& pData : arrLineData)
-	{
-		box b(point(pData->m_extents.min().x, pData->m_extents.min().y), point(pData->m_extents.max().x, pData->m_extents.max().y));
-		cloud.emplace_back(std::make_pair(b, id_gen++));
-	}
+    size_t             id_gen = 0;
+    std::vector<value> cloud;
+    for (const auto& pData : arrLineData)
+    {
+        box b(point(pData->m_extents.min().x, pData->m_extents.min().y), point(pData->m_extents.max().x, pData->m_extents.max().y));
+        cloud.emplace_back(std::make_pair(b, id_gen++));
+    }
 
-	bgi::rtree< value, bgi::quadratic<16> > rtree(cloud);
+    bgi::rtree<value, bgi::quadratic<16> > rtree(cloud);
 
-	//time.addTimePoint("construct rtree-pack");
+    // time.addTimePoint("construct rtree-pack");
 
-	for (const auto& bounding : cloud)
-	{
-		std::vector<value> result_s;
-		rtree.query(bgi::intersects(bounding.first), std::back_inserter(result_s));
-	}
+    for (const auto& bounding : cloud)
+    {
+        std::vector<value> result_s;
+        rtree.query(bgi::intersects(bounding.first), std::back_inserter(result_s));
+    }
 
-	time.addTimePoint("");
+    time.addTimePoint("");
 
-	std::ostringstream oss;
-	oss << "对" << arrLineData.size() << "个实体求交 -> boost.geometry.index.rtree-Packing";
-	std::string strText = oss.str();
+    std::ostringstream oss;
+    oss << "对" << arrLineData.size() << "个实体求交 -> boost.geometry.index.rtree-Packing";
+    std::string strText = oss.str();
 
-	time.write(strLogPath, strText);
+    time.write(strLogPath, strText);
 #endif
 }
 
 void TestBoostRtree::quickStart(const std::vector<sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
 {
 #ifdef TEST_BOOST_RTREE
-	using namespace sindy;
+    using namespace sindy;
 
-	typedef bg::model::point<int, 2, bg::cs::cartesian> point;
-	typedef bg::model::box<point> box;
-	typedef std::pair<box, unsigned> value;
+    typedef bg::model::point<int, 2, bg::cs::cartesian> point;
+    typedef bg::model::box<point>                       box;
+    typedef std::pair<box, unsigned>                    value;
 
-	RunTime time;
+    RunTime time;
 
-	// create the rtree using default constructor
-	bgi::rtree< value, bgi::quadratic<16> > rtree;
+    // create the rtree using default constructor
+    bgi::rtree<value, bgi::quadratic<16> > rtree;
 
-	// create some values
-	unsigned i = 0;
-	for (const auto& pData : arrLineData)
-	{
-		// create a box
-		box b(point(pData->m_extents.min().x, pData->m_extents.min().y), point(pData->m_extents.max().x, pData->m_extents.max().y));
-		// insert new value
-		rtree.insert(std::make_pair(b, i++));
-	}
+    // create some values
+    unsigned i = 0;
+    for (const auto& pData : arrLineData)
+    {
+        // create a box
+        box b(point(pData->m_extents.min().x, pData->m_extents.min().y), point(pData->m_extents.max().x, pData->m_extents.max().y));
+        // insert new value
+        rtree.insert(std::make_pair(b, i++));
+    }
 
-	//time.addTimePoint("construct rtree");
+    // time.addTimePoint("construct rtree");
 
-	for (const auto& pData : arrLineData)
-	{
-		box b(point(pData->m_extents.min().x, pData->m_extents.min().y), point(pData->m_extents.max().x, pData->m_extents.max().y));
+    for (const auto& pData : arrLineData)
+    {
+        box b(point(pData->m_extents.min().x, pData->m_extents.min().y), point(pData->m_extents.max().x, pData->m_extents.max().y));
 
-		std::vector<value> result_s;
-		rtree.query(bgi::intersects(b), std::back_inserter(result_s));
-	}
+        std::vector<value> result_s;
+        rtree.query(bgi::intersects(b), std::back_inserter(result_s));
+    }
 
-	time.addTimePoint("");
+    time.addTimePoint("");
 
-	std::ostringstream oss;
-	oss << "对" << arrLineData.size() << "个实体求交 -> boost.geometry.index.rtree-QuickStart";
-	std::string strText = oss.str();
+    std::ostringstream oss;
+    oss << "对" << arrLineData.size() << "个实体求交 -> boost.geometry.index.rtree-QuickStart";
+    std::string strText = oss.str();
 
-	time.write(strLogPath, strText);
+    time.write(strLogPath, strText);
 #endif
 }
