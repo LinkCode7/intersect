@@ -15,7 +15,7 @@ bool compareDouble(double value1, double value2, double tol = SINDY_ZERO)
 	return false;
 }
 
-namespace Sindy
+namespace sindy
 {
 	Extents::Extents() : m_min{ MY_EXTENTS_MIN, MY_EXTENTS_MIN, MY_EXTENTS_MIN }, m_max{ MY_EXTENTS_MAX, MY_EXTENTS_MAX, MY_EXTENTS_MAX } {}
 	Extents::Extents(const Point3d& pt) : m_min(pt), m_max(pt) {}
@@ -170,4 +170,4 @@ namespace Sindy
 		return { (m_max.x * 0.5 + m_min.x * 0.5), (m_max.y * 0.5 + m_min.y * 0.5), (m_max.z * 0.5 + m_min.z * 0.5) };
 	}
 
-} // namespace Sindy
+} // namespace sindy

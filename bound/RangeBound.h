@@ -5,7 +5,7 @@
 #define SINDY_ZERO 0.0000001
 #define UNKNOWN_REGION_ID -999999
 
-namespace Sindy
+namespace sindy
 {
 	struct SINDY_API DoubleLess
 	{
@@ -127,4 +127,4 @@ namespace Sindy
 	// 请调用者保证Item唯一性，变体
 	void getIntersectItem2(const std::vector<IBoundItem*>& ipItem, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol = 1.0);
 
-} // namespace Sindy
+} // namespace sindy

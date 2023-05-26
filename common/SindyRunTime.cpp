@@ -5,7 +5,7 @@
 
 using namespace std::chrono;
 
-namespace Sindy
+namespace sindy
 {
 	RunTime::RunTime() :
 		m_firstTime(steady_clock::now()),
@@ -79,7 +79,7 @@ namespace Sindy
 		return strMsg;
 	}
 
-	std::string RunTime::_write(const std::string& strTitle)
+	std::string RunTime::str(const std::string& strTitle)
 	{
 		std::stringstream log;
 
@@ -116,4 +116,4 @@ namespace Sindy
 		ofs << _write(strTitle);
 	}
 
-} // namespace Sindy
+} // namespace sindy

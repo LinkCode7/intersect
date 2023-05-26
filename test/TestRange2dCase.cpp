@@ -20,17 +20,17 @@ std::vector<std::shared_ptr<TestRange2dCase::LineData2>> TestRange2dCase::_makeL
 	return arrLineData;
 }
 
-std::set<std::string> TestRange2dCase::_getIntersectResult(Sindy::Range2d& range, const std::vector<std::shared_ptr<LineData2>>& lineDatas, double tol)
+std::set<std::string> TestRange2dCase::_getIntersectResult(sindy::Range2d& range, const std::vector<std::shared_ptr<LineData2>>& lineDatas, double tol)
 {
 	range.setRangeItems(lineDatas, true, tol);
 
-	std::vector<Sindy::RangeItem*> vecItem;
+	std::vector<sindy::RangeItem*> vecItem;
 	range.getIntersectItem(vecItem);
 
 	std::set<std::string> result;
 	for (auto iter = vecItem.begin(); iter != vecItem.end(); ++iter)
 	{
-		Sindy::RangeItem* pSrcItem = *iter;
+		sindy::RangeItem* pSrcItem = *iter;
 		auto pSrcLineData = pSrcItem->cast<LineData2>();
 
 		auto it = pSrcItem->begin();
@@ -53,7 +53,7 @@ int TestRange2dCase::check(const std::vector<BoxInfo>& arrBox, const std::vector
 {
 	auto arrLineData = _makeLineData(arrBox);
 
-	Sindy::Range2d range;
+	sindy::Range2d range;
 	std::set<std::string> result = _getIntersectResult(range, arrLineData, tol);
 
 #ifdef _DEBUG
@@ -121,7 +121,7 @@ void TestRange2dCase::testIntersect()
 
 void TestRange2dCase::testBoundSort()
 {
-	using namespace Sindy;
+	using namespace sindy;
 
 	auto checkSort = [](const std::vector<BoxInfo>& arrBox, const std::vector<double>& expect) -> int {
 		Range2d range;
@@ -191,16 +191,16 @@ void TestRange2dCase::randBox()
 #define MAX_BOX_COUNT 100
 	std::vector<std::shared_ptr<LineData2>> arrLineData;
 
-	Sindy::Extents ext;
+	sindy::Extents ext;
 	for (auto i = 0; i < MAX_BOX_COUNT; ++i)
 	{
-		ext.reset({ getFloatRand(), getFloatRand()}, { getFloatRand(), getFloatRand() });
+		ext.reset({ getFloatRand(), getFloatRand() }, { getFloatRand(), getFloatRand() });
 		auto pLineData = std::make_shared<LineData2>(ext.min(), ext.max(), std::to_string(i));
 		arrLineData.emplace_back(pLineData);
 	}
 #undef MAX_BOX_COUNT
 
-	Sindy::Range2d range;
+	sindy::Range2d range;
 	std::set<std::string> result = _getIntersectResult(range, arrLineData, 0.0);
 
 	auto count = 0;
@@ -249,23 +249,23 @@ void TestRange2dCase::testSrcDes()
 	std::vector<BoxInfo> desBox;
 	auto desLineData = _makeLineData(desBox);
 
-	Sindy::Range2d range;
+	sindy::Range2d range;
 	range.setRangeItems(srcLineData, true, 10.0);  // 设为源实体
 	range.setRangeItems(desLineData, false);
 
-	std::vector<Sindy::RangeItem*> vecItem;
+	std::vector<sindy::RangeItem*> vecItem;
 	range.getIntersectItem(vecItem);
 
 	auto iter = vecItem.begin();
 	for (; iter != vecItem.end(); ++iter)
 	{
-		Sindy::RangeItem* pSrcItem = *iter;
+		sindy::RangeItem* pSrcItem = *iter;
 		auto pSrcLineData = pSrcItem->cast<LineData2>();
 
 		auto it = pSrcItem->begin();
 		for (; it != pSrcItem->end(); ++it)
 		{
-			Sindy::RangeItem* pDesItem = *it;
+			sindy::RangeItem* pDesItem = *it;
 			auto pDesLineData = pDesItem->cast<LineData2>();
 
 			// src-des intersect

@@ -7,7 +7,7 @@
 
 void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 {
-	using namespace Sindy;
+	using namespace sindy;
 
 	std::vector<TestLineDataBound*> vecLineData;
 	unSerializePoints(strDbPath, vecLineData);
@@ -22,7 +22,7 @@ void TestPerformance::entry(const PString& strDbPath, const PString& strLogPath)
 
 void TestPerformance::testFor(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath)
 {
-	using namespace Sindy;
+	using namespace sindy;
 	RunTime time;
 
 	int size = static_cast<int>(vecLineData.size());
@@ -58,7 +58,7 @@ void TestPerformance::testFor(const std::vector<TestLineDataBound*>& vecLineData
 
 void TestPerformance::testOutOf(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath)
 {
-	using namespace Sindy;
+	using namespace sindy;
 	RunTime time;
 
 	int size = static_cast<int>(vecLineData.size());
@@ -97,7 +97,7 @@ void TestPerformance::testOutOf(const std::vector<TestLineDataBound*>& vecLineDa
 
 void TestPerformance::testRangeBound(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath)
 {
-	using namespace Sindy;
+	using namespace sindy;
 	RunTime time;
 
 	Range2d range;
@@ -145,7 +145,7 @@ void TestPerformance::testRangeBound(const std::vector<TestLineDataBound*>& vecL
 
 void TestPerformance::testAccuracy(const PString& strDbPath)
 {
-	using namespace Sindy;
+	using namespace sindy;
 	std::vector<TestLineDataBound*> vecLineData;
 	unSerializePoints(strDbPath, vecLineData);
 
@@ -220,7 +220,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 
 	// 保存
 	{
-		Sindy::SQLite database(strDbPath);
+		sindy::SQLite database(strDbPath);
 		database.beginTransaction();
 		database.dropTable("result_range");
 		database.execute("CREATE TABLE result_range(handle TEXT PRIMARY KEY,relation TEXT)");
@@ -229,7 +229,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 		for (const auto& item : mapLine2Links1)
 		{
 			std::string str;
-			Sindy::joinStr(*(item.second), str);
+			sindy::joinStr(*(item.second), str);
 
 			database.bindText(":1", item.first);
 			database.bindText(":2", str);
@@ -242,7 +242,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 	// for-for
 	{
 		int count = 0;
-		Sindy::SQLite database(strDbPath);
+		sindy::SQLite database(strDbPath);
 		database.beginTransaction();
 		database.dropTable("result_for");
 		database.execute("CREATE TABLE result_for(handle TEXT PRIMARY KEY,relation TEXT)");
@@ -251,7 +251,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 		for (const auto& item : mapLine2Links2)
 		{
 			std::string strFor;
-			Sindy::joinStr(*(item.second), strFor);
+			sindy::joinStr(*(item.second), strFor);
 
 			database.bindText(":1", item.first);
 			database.bindText(":2", strFor);
@@ -269,7 +269,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 				}
 
 				std::string strRange;
-				Sindy::joinStr(*(iter->second), strRange);
+				sindy::joinStr(*(iter->second), strRange);
 				if (strFor != strRange)
 				{
 					++count;
@@ -281,8 +281,8 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
 		database.commit();
 		std::cout << count << "条记录不匹配" << std::endl;
 	}
-	Sindy::ReleaseMapValue(mapLine2Links1);
-	Sindy::ReleaseMapValue(mapLine2Links2);
+	sindy::ReleaseMapValue(mapLine2Links1);
+	sindy::ReleaseMapValue(mapLine2Links2);
 }
 
 void TestPerformance::_testAccuracy(std::map<std::string, std::set<std::string>*>& mapLine2Links, const std::string& strLine1, const std::string& strLine2)

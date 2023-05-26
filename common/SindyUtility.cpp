@@ -1,6 +1,6 @@
 #include "SindyUtility.h"
 
-int Sindy::compareDbl(double src1, double src2, double dTol)
+int sindy::compareDbl(double src1, double src2, double dTol)
 {
 	double dblSub = src1 - src2;
 	// 相同

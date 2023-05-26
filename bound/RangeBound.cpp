@@ -1,16 +1,16 @@
 #include "RangeBound.h"
 #include <algorithm>
 
-bool Sindy::IBoundItem::getId(REGIONID& id)
+bool sindy::IBoundItem::getId(REGIONID& id)
 {
 	return false;
 }
-bool Sindy::IBoundItem::getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY)
+bool sindy::IBoundItem::getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY)
 {
 	return false;
 }
 
-Sindy::BoundItem::BoundItem(IBoundItem* ipItem) :
+sindy::BoundItem::BoundItem(IBoundItem* ipItem) :
 	m_ipItem(ipItem),
 	m_minX(0.0),
 	m_minY(0.0),
@@ -19,7 +19,7 @@ Sindy::BoundItem::BoundItem(IBoundItem* ipItem) :
 {
 }
 
-Sindy::RangeItem::RangeItem(IBoundItem* ipItem, Ranges* pRange, bool isMin, bool isSrc) :
+sindy::RangeItem::RangeItem(IBoundItem* ipItem, Ranges* pRange, bool isMin, bool isSrc) :
 	BoundItem(ipItem),
 	m_pItems(pRange),
 	m_maxValue(isMin ? 0 : 1),
@@ -27,18 +27,18 @@ Sindy::RangeItem::RangeItem(IBoundItem* ipItem, Ranges* pRange, bool isMin, bool
 {
 }
 
-Sindy::RangeItem::~RangeItem()
+sindy::RangeItem::~RangeItem()
 {
 	if (m_maxValue) // 统一在某一端释放
 		delete m_pItems;
 }
 
-Sindy::Range2d::~Range2d()
+sindy::Range2d::~Range2d()
 {
 	reset();
 }
 
-void Sindy::Range2d::reset()
+void sindy::Range2d::reset()
 {
 	for (auto& item : m_arrIndex)
 		delete item;
@@ -46,7 +46,7 @@ void Sindy::Range2d::reset()
 }
 
 // 只输出源实体相关的Bound
-bool Sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
+bool sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
 {
 	if (!ipItem) return false;
 
@@ -83,7 +83,7 @@ bool Sindy::Range2d::setItem(IBoundItem* ipItem, bool isSrc, double tol)
 }
 
 // setItem时要设置误差
-void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function)
+void sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, SrcDestFunction function)
 {
 	sortBox();
 
@@ -139,7 +139,7 @@ void Sindy::Range2d::getIntersectItem(std::vector<RangeItem*>& vecIntersect, Src
 	}
 }
 
-void Sindy::Range2d::sortBox()
+void sindy::Range2d::sortBox()
 {
 	// 从小到大排序，当值相等时，最大点的X对应的item 排在 最小点的X对应的item 之前，
 	// 这是为了把仅在边界相交的两个box放到结果集中，而不依赖放进容器中的顺序，也是不用multimap的理由
@@ -147,10 +147,10 @@ void Sindy::Range2d::sortBox()
 		if (left->value() == right->value() && left->m_maxValue != right->m_maxValue)
 			return left->m_maxValue < right->m_maxValue;
 		return left->value() < right->value();
-	});
+		});
 }
 
-std::vector<double> Sindy::Range2d::testSortBox()
+std::vector<double> sindy::Range2d::testSortBox()
 {
 	sortBox();
 
@@ -169,7 +169,7 @@ std::vector<double> Sindy::Range2d::testSortBox()
 	return result;
 }
 
-void Sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol)
+void sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol)
 {
 	std::multimap<double, BoundItem*, DoubleLess> mapDouble2Item;
 
@@ -216,12 +216,12 @@ void Sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& pt
 	}
 }
 
-void Sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double tol)
+void sindy::getSameItem(const std::vector<IBoundItem*>& items, const Point3d& ptInsert, std::set<IBoundItem*>& setRepeat, double radius, double tol)
 {
 	getSameItem(items, Point3d(ptInsert.x - radius, ptInsert.y - radius, 0), Point3d(ptInsert.x + radius, ptInsert.y + radius, 0), setRepeat, tol);
 }
 
-void Sindy::getIntersectItem2(const std::vector<IBoundItem*>& items, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol)
+void sindy::getIntersectItem2(const std::vector<IBoundItem*>& items, const Point3d& ptMin, const Point3d& ptMax, std::set<IBoundItem*>& setRepeat, double tol)
 {
 	std::multimap<double, BoundItem*, DoubleLess> mapDouble2Item;
 

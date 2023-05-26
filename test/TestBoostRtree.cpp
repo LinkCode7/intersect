@@ -26,7 +26,7 @@ namespace bgi = boost::geometry::index;
 
 void TestBoostRtree::entry(const PString& strDbPath, const PString& strLogPath)
 {
-	using namespace Sindy;
+	using namespace sindy;
 	std::vector<TestLineData*> arrLineData;
 	unSerializePoints(strDbPath, arrLineData);
 
@@ -35,10 +35,10 @@ void TestBoostRtree::entry(const PString& strDbPath, const PString& strLogPath)
 	quickStart(arrLineData, strDbPath, strLogPath);
 }
 
-void TestBoostRtree::queryOfPacking(const std::vector<Sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
+void TestBoostRtree::queryOfPacking(const std::vector<sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
 {
 #ifdef TEST_BOOST_RTREE
-	using namespace Sindy;
+	using namespace sindy;
 
 	typedef bg::model::point<int, 2, bg::cs::cartesian> point;
 	typedef bg::model::box<point> box;
@@ -74,10 +74,10 @@ void TestBoostRtree::queryOfPacking(const std::vector<Sindy::TestLineData*>& arr
 #endif
 }
 
-void TestBoostRtree::quickStart(const std::vector<Sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
+void TestBoostRtree::quickStart(const std::vector<sindy::TestLineData*>& arrLineData, const PString& strDbPath, const PString& strLogPath)
 {
 #ifdef TEST_BOOST_RTREE
-	using namespace Sindy;
+	using namespace sindy;
 
 	typedef bg::model::point<int, 2, bg::cs::cartesian> point;
 	typedef bg::model::box<point> box;

@@ -12,16 +12,16 @@ namespace TestPerformance
 	void _testAccuracy(std::map<std::string, std::set<std::string>*>& mapLine2Links, const std::string& strLine1, const std::string& strLine2);
 	std::set<std::string>* _getRelations(std::map<std::string, std::set<std::string>*>& mapLine2Links, const std::string& strId);
 
-	class TestLineDataBound : public Sindy::TestLineData, public Sindy::IBoundItem
+	class TestLineDataBound : public sindy::TestLineData, public sindy::IBoundItem
 	{
 	public:
 		bool getExtents(double& dMinX, double& dMinY, double& dMaxX, double& dMaxY) override
 		{
-			Sindy::Point3d ptMin = m_extents.min();
+			sindy::Point3d ptMin = m_extents.min();
 			dMinX = ptMin.x;
 			dMinY = ptMin.y;
 
-			Sindy::Point3d ptMax = m_extents.max();
+			sindy::Point3d ptMax = m_extents.max();
 			dMaxX = ptMax.x;
 			dMaxY = ptMax.y;
 			return true;

@@ -12,7 +12,7 @@
 #define ConverToMilliseconds(durationX) std::chrono::duration_cast<std::chrono::milliseconds>((durationX))
 #endif
 
-namespace Sindy
+namespace sindy
 {
 	using TimePoint = std::chrono::steady_clock::time_point;
 	using DurationTime = std::chrono::steady_clock::duration;
@@ -25,7 +25,6 @@ namespace Sindy
 		std::vector<std::string> m_arrLog;
 
 		void _addRunTime(const std::string& strCatalog, DurationTime offset);
-		std::string _write(const std::string& strTitle);
 		std::string _catalog(const std::string& strInput = "");
 	public:
 		RunTime();
@@ -33,9 +32,10 @@ namespace Sindy
 
 		// 获取上一个log到当前log流逝的时间
 		long addTimePoint(const std::string& strLog = "");
+		std::string str(const std::string& strTitle);
 		void write(const std::string& strFileFullPath, const std::string& strTitle = "");
 	};
 
-} // namespace Sindy
+} // namespace sindy
 
 #endif !SINDY_RUN_TIME_H

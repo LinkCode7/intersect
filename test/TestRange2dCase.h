@@ -22,10 +22,10 @@ namespace TestRange2dCase
 	// 随机地生成浮点数
 	float getFloatRand();
 
-	class LineData2 : public Sindy::TestLineData, public Sindy::IBoundItem
+	class LineData2 : public sindy::TestLineData, public sindy::IBoundItem
 	{
 	public:
-		LineData2(const Sindy::Point3d& ptMin, const Sindy::Point3d& ptMax, const std::string& handle)
+		LineData2(const sindy::Point3d& ptMin, const sindy::Point3d& ptMax, const std::string& handle)
 		{
 			m_ptBegin = ptMin;
 			m_ptEnd = ptMax;
@@ -50,15 +50,15 @@ namespace TestRange2dCase
 	class BoxInfo
 	{
 	public:
-		Sindy::Point3d m_ptMin;
-		Sindy::Point3d m_ptMax;
+		sindy::Point3d m_ptMin;
+		sindy::Point3d m_ptMax;
 		std::string m_strHandle;
-		BoxInfo(const Sindy::Point3d& ptMin, const Sindy::Point3d& ptMax, const std::string& strHandle) : m_ptMin(ptMin), m_ptMax(ptMax), m_strHandle(strHandle) {}
+		BoxInfo(const sindy::Point3d& ptMin, const sindy::Point3d& ptMax, const std::string& strHandle) : m_ptMin(ptMin), m_ptMax(ptMax), m_strHandle(strHandle) {}
 	};
 
 	// 辅助函数
 	std::vector<std::shared_ptr<LineData2>> _makeLineData(const std::vector<BoxInfo>& arrBox);
-	std::set<std::string> _getIntersectResult(Sindy::Range2d& range, const std::vector<std::shared_ptr<LineData2>>& lineDatas, double tol);
+	std::set<std::string> _getIntersectResult(sindy::Range2d& range, const std::vector<std::shared_ptr<LineData2>>& lineDatas, double tol);
 	int check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol = 0.0);
 }
 

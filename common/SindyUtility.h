@@ -32,7 +32,7 @@ typedef SindyInt REGIONID;
 
 #define SINDY_API
 
-namespace Sindy
+namespace sindy
 {
 	inline double getAbs(double dValue)
 	{
@@ -45,7 +45,7 @@ namespace Sindy
 	// 比较两个浮点数：0表示相同 1表示前面大 -1表示后面大
 	SINDY_API int compareDbl(double src1, double src2, double dTol = 0.000001);
 
-	inline bool isSamePt(const Sindy::Point3d& ptSrc, const Sindy::Point3d& ptDes, double dTol = 1.0)
+	inline bool isSamePt(const sindy::Point3d& ptSrc, const sindy::Point3d& ptDes, double dTol = 1.0)
 	{
 		if (fabs(ptSrc.x - ptDes.x) <= dTol && fabs(ptSrc.y - ptDes.y) <= dTol)
 			return true;
@@ -93,11 +93,11 @@ namespace Sindy
 	{
 	public:
 		std::string m_strId;
-		Sindy::Point3d m_ptBegin;
-		Sindy::Point3d m_ptEnd;
+		sindy::Point3d m_ptBegin;
+		sindy::Point3d m_ptEnd;
 		double m_dBulge = 0.0;
 
-		Sindy::Extents m_extents;
+		sindy::Extents m_extents;
 	};
 
 	// 反序列化测试数据
@@ -105,10 +105,10 @@ namespace Sindy
 	void unSerializePoints(const PString& strDbPath, std::vector<LineDataType*>& vecLineData)
 	{
 		// TestData.Line
-		Sindy::SQLite database(strDbPath);
+		sindy::SQLite database(strDbPath);
 
 		std::string strSql = "select * from ";
-		strSql += Sindy::table_name;
+		strSql += sindy::table_name;
 
 		database.beginTransaction();
 		database.prepare(strSql);
@@ -116,27 +116,27 @@ namespace Sindy
 		while (SQLITE_ROW == database.step())
 		{
 			LineDataType* pLineData = new LineDataType();
-			database.getValueText(Sindy::handle, pLineData->m_strId);
+			database.getValueText(sindy::handle, pLineData->m_strId);
 
-			database.getValueDouble(Sindy::bulge, pLineData->m_dBulge);
-			database.getValueDouble(Sindy::from_x, pLineData->m_ptBegin.x);
-			database.getValueDouble(Sindy::from_y, pLineData->m_ptBegin.y);
-			database.getValueDouble(Sindy::to_x, pLineData->m_ptEnd.x);
-			database.getValueDouble(Sindy::to_y, pLineData->m_ptEnd.y);
+			database.getValueDouble(sindy::bulge, pLineData->m_dBulge);
+			database.getValueDouble(sindy::from_x, pLineData->m_ptBegin.x);
+			database.getValueDouble(sindy::from_y, pLineData->m_ptBegin.y);
+			database.getValueDouble(sindy::to_x, pLineData->m_ptEnd.x);
+			database.getValueDouble(sindy::to_y, pLineData->m_ptEnd.y);
 
 			double dMinX = 0.0;
-			database.getValueDouble(Sindy::min_x, dMinX);
+			database.getValueDouble(sindy::min_x, dMinX);
 			double dMinY = 0.0;
-			database.getValueDouble(Sindy::min_y, dMinY);
+			database.getValueDouble(sindy::min_y, dMinY);
 			double dMaxX = 0.0;
-			database.getValueDouble(Sindy::max_x, dMaxX);
+			database.getValueDouble(sindy::max_x, dMaxX);
 			double dMaxY = 0.0;
-			database.getValueDouble(Sindy::max_y, dMaxY);
+			database.getValueDouble(sindy::max_y, dMaxY);
 
-			pLineData->m_extents = { Sindy::Point3d(dMinX, dMinY, 0.0), Sindy::Point3d(dMaxX, dMaxY, 0.0) };
+			pLineData->m_extents = { sindy::Point3d(dMinX, dMinY, 0.0), sindy::Point3d(dMaxX, dMaxY, 0.0) };
 
 			vecLineData.push_back(pLineData);
 		}
 	}
 
-} // namespace Sindy
+} // namespace sindy

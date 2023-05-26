@@ -5,7 +5,7 @@
 #define SINDY_ZERO 0.00001  // 1e-5
 #define SINDY_DEFAULT_DOUBLE 0.0
 
-namespace Sindy
+namespace sindy
 {
 	class Point3d
 	{
@@ -51,6 +51,6 @@ namespace Sindy
 		bool outExtents(const Extents& ext, double tol) const;
 	};
 
-} // namespace Sindy
+} // namespace sindy
 
 #endif // !SINDY_EXTENTS_H
