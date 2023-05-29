@@ -32,4 +32,4 @@ void testRangeBound(const std::vector<TestLineDataBound*>& vecLineData, const PS
 void testFor(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath);
 void testOutOf(const std::vector<TestLineDataBound*>& vecLineData, const PString& strLogPath);
 
-}  // namespace TestPerformance
+} // namespace TestPerformance

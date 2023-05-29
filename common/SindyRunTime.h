@@ -38,6 +38,6 @@ public:
     void        write(const std::string& strFileFullPath, const std::string& strTitle = "");
 };
 
-}  // namespace sindy
+} // namespace sindy
 
 #endif !SINDY_RUN_TIME_H

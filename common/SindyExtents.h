@@ -2,7 +2,7 @@
 #define SINDY_EXTENTS_H
 #include <initializer_list>
 
-#define SINDY_ZERO 0.00001  // 1e-5
+#define SINDY_ZERO 0.00001 // 1e-5
 #define SINDY_DEFAULT_DOUBLE 0.0
 
 namespace sindy
@@ -37,7 +37,7 @@ public:
     void    reset(const Point3d& pt1, const Point3d& pt2);
     bool    invalid() const;
     Point3d centerPt() const;
-    void    expand(double value);  // 扩大或缩小(负数)包络
+    void    expand(double value); // 扩大或缩小(负数)包络
     void    moveTo(const Point3d& ptNewCenter);
 
     void addPoint(const Point3d& pt);
@@ -51,6 +51,6 @@ public:
     bool outExtents(const Extents& ext, double tol) const;
 };
 
-}  // namespace sindy
+} // namespace sindy
 
-#endif  // !SINDY_EXTENTS_H
+#endif // !SINDY_EXTENTS_H

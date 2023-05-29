@@ -86,7 +86,7 @@ std::string RunTime::str(const std::string& strTitle)
     TimePoint curTime = steady_clock::now();
     long      all     = ConverToMilliseconds(curTime - m_firstTime).count();
 
-    if (m_arrLog.size() == 1 && m_arrLog[0].empty())  // 只有一个标签
+    if (m_arrLog.size() == 1 && m_arrLog[0].empty()) // 只有一个标签
     {
         auto iter = m_mapLog2Time.find(m_arrLog[0]);
         if (iter != m_mapLog2Time.end())
@@ -116,4 +116,4 @@ void RunTime::write(const std::string& strFileFullPath, const std::string& strTi
     ofs << str(strTitle);
 }
 
-}  // namespace sindy
+} // namespace sindy

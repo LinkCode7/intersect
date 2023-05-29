@@ -32,7 +32,7 @@ void TestPerformance::testFor(const std::vector<TestLineDataBound*>& vecLineData
         TestLineDataBound* pSrcLineData = vecLineData[i];
 
         // for (int j = 0; j < size; ++j) // 245969ms
-        for (int j = i + 1; j < size; ++j)  // 100360ms
+        for (int j = i + 1; j < size; ++j) // 100360ms
         {
             TestLineDataBound* pDesLineData = vecLineData[j];
 
@@ -67,7 +67,7 @@ void TestPerformance::testOutOf(const std::vector<TestLineDataBound*>& vecLineDa
     {
         TestLineDataBound* pSrcLineData = vecLineData[i];
 
-        for (int j = i + 1; j < size; ++j)  // 100360ms
+        for (int j = i + 1; j < size; ++j) // 100360ms
         {
             TestLineDataBound* pDesLineData = vecLineData[j];
 
@@ -111,7 +111,7 @@ void TestPerformance::testRangeBound(const std::vector<TestLineDataBound*>& vecL
     range.getIntersectItem(vecItem);
 
     std::vector<RangeItem*>::iterator iter = vecItem.begin();
-    for (; iter != vecItem.end(); ++iter)  // 771ms
+    for (; iter != vecItem.end(); ++iter) // 771ms
     {
         RangeItem* pItem        = *iter;
         auto       pSrcLineData = pItem->cast<TestLineDataBound>();
@@ -160,7 +160,7 @@ void TestPerformance::testAccuracy(const PString& strDbPath)
         range.getIntersectItem(vecItem);
 
         std::vector<RangeItem*>::iterator iter = vecItem.begin();
-        for (; iter != vecItem.end(); ++iter)  // 771ms
+        for (; iter != vecItem.end(); ++iter) // 771ms
         {
             RangeItem* pItem        = *iter;
             auto       pSrcLineData = pItem->cast<TestLineDataBound>();

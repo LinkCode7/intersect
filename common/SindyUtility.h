@@ -139,4 +139,4 @@ void unSerializePoints(const PString& strDbPath, std::vector<LineDataType*>& vec
     }
 }
 
-}  // namespace sindy
+} // namespace sindy

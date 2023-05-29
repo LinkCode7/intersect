@@ -127,6 +127,6 @@ private:
     std::map<PString, int> m_mapFieldName2Index;
 };
 
-}  // namespace sindy
+} // namespace sindy
 
-#endif  // !SINDY_SQLITE_H
+#endif // !SINDY_SQLITE_H

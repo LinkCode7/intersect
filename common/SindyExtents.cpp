@@ -174,4 +174,4 @@ Point3d Extents::centerPt() const
     return {(m_max.x * 0.5 + m_min.x * 0.5), (m_max.y * 0.5 + m_min.y * 0.5), (m_max.z * 0.5 + m_min.z * 0.5)};
 }
 
-}  // namespace sindy
+} // namespace sindy

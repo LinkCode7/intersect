@@ -63,6 +63,6 @@ public:
 std::vector<std::shared_ptr<LineData2>> _makeLineData(const std::vector<BoxInfo>& arrBox);
 std::set<std::string> _getIntersectResult(sindy::Range2d& range, const std::vector<std::shared_ptr<LineData2>>& lineDatas, double tol);
 int                   check(const std::vector<BoxInfo>& arrBox, const std::vector<std::string>& expect, double tol = 0.0);
-}  // namespace TestRange2dCase
+} // namespace TestRange2dCase
 
-#endif  // !TEST_RANGE2D_CASE_H
+#endif // !TEST_RANGE2D_CASE_H

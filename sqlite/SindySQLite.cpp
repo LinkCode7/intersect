@@ -547,4 +547,4 @@ PString SQLite::errorMessage()
 #endif
 }
 
-}  // namespace sindy
+} // namespace sindy
