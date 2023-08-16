@@ -8,112 +8,78 @@ using namespace std::chrono;
 
 namespace sindy
 {
-RunTime::RunTime() : m_firstTime(steady_clock::now()), m_lastTime(m_firstTime)
+RunTime::RunTime() : _firstTime(steady_clock::now()), _lastTime(_firstTime)
 {
 }
 
-long RunTime::addTimePoint(const std::string& strLog)
+long RunTime::addTimePoint(std::string const& log)
 {
     TimePoint curTime = steady_clock::now();
-    auto      offset  = curTime - m_lastTime;
-    m_lastTime        = curTime;
+    auto      offset  = curTime - _lastTime;
+    _lastTime         = curTime;
 
-    _addRunTime(strLog, offset);
+    _addRunTime(log, offset);
     long result = ConverToMilliseconds(offset).count();
     return result;
 }
 
 void RunTime::reset()
 {
-    m_mapLog2Time.clear();
-    m_arrLog.clear();
-    m_firstTime = steady_clock::now();
-    m_lastTime  = m_firstTime;
+    _mapLog2Time.clear();
+    _arrLog.clear();
+    _firstTime = steady_clock::now();
+    _lastTime  = _firstTime;
 }
 
-void RunTime::_addRunTime(const std::string& strCatalog, DurationTime offset)
+void RunTime::_addRunTime(std::string const& catalog, DurationTime offset)
 {
-    auto iter = m_mapLog2Time.find(strCatalog);
-    if (iter != m_mapLog2Time.end())
+    auto iter = _mapLog2Time.find(catalog);
+    if (iter != _mapLog2Time.end())
     {
         iter->second += offset;
     }
     else
     {
-        m_mapLog2Time[strCatalog] = offset;
-        m_arrLog.emplace_back(strCatalog);
+        _mapLog2Time[catalog] = offset;
+        _arrLog.emplace_back(catalog);
     }
 }
 
-std::string RunTime::_catalog(const std::string& strInput)
+std::string RunTime::str(std::string const& title) const
 {
-    if (m_arrLog.empty())
-        addTimePoint();
-
-    std::string strMsg(strInput);
-    strMsg += "\n";
-
-    std::ostringstream oss;
-
-    if (m_arrLog.size() == 1)
-    {
-        auto iter = m_mapLog2Time.find(*(m_arrLog.begin()));
-        if (iter != m_mapLog2Time.end())
-        {
-            oss << *(m_arrLog.begin()) << ": " << ConverToMilliseconds(iter->second).count() << "ms" << std::endl;
-            strMsg = oss.str();
-        }
-    }
-    else
-    {
-        for (const auto& strLog : m_arrLog)
-        {
-            auto iter = m_mapLog2Time.find(strLog);
-            if (iter == m_mapLog2Time.end())
-                continue;
-
-            oss << strLog << ": " << ConverToMilliseconds(iter->second).count() << "ms" << std::endl;
-        }
-        strMsg = oss.str();
-    }
-    return strMsg;
-}
-
-std::string RunTime::str(const std::string& strTitle)
-{
-    std::stringstream log;
-
     TimePoint curTime = steady_clock::now();
-    long      all     = ConverToMilliseconds(curTime - m_firstTime).count();
+    long      all     = ConverToMilliseconds(curTime - _firstTime).count();
 
-    if (m_arrLog.size() == 1 && m_arrLog[0].empty()) // 只有一个标签
+    std::stringstream ss;
+    if (title.empty())
+        ss << std::endl << "total: " << all << "ms" << std::endl;
+    else
+        ss << std::endl << title << " total: " << all << "ms" << std::endl;
+
+    for (const auto& log : _arrLog)
     {
-        auto iter = m_mapLog2Time.find(m_arrLog[0]);
-        if (iter != m_mapLog2Time.end())
-        {
-            all = ConverToMilliseconds(iter->second).count();
-            log << std::endl << strTitle << " 总计：" << all << "ms" << std::endl;
-            return log.str();
-        }
+        auto iter = _mapLog2Time.find(log);
+        if (iter == _mapLog2Time.end())
+            continue;
+
+        ss << log << ": " << ConverToMilliseconds(iter->second).count() << "ms" << std::endl;
     }
 
-    log << std::endl << strTitle << " 总计：" << all << "ms" << std::endl;
-    log << _catalog() << std::endl;
-    return log.str();
+    return ss.str();
 }
 
-void RunTime::write(const std::string& strFileFullPath, const std::string& strTitle)
+void RunTime::console(std::string const& title) const
 {
-    if (m_arrLog.empty())
-        addTimePoint();
+    std::cout << str();
+}
 
-    //// 将全局locale设为本地语言
-    // locale& loc = locale::global(locale(locale(), "", LC_CTYPE));
-    std::ofstream ofs(strFileFullPath, std::ios::app);
-    //// 将全局locale恢复
-    // locale::global(loc);
+void RunTime::write(std::string const& fullPath, std::string const& title) const
+{
+    // std::locale&  loc = std::locale::global(std::locale(std::locale(), "", LC_CTYPE)); // 设全局locale为本地语言
+    std::ofstream ofs(fullPath, std::ios::app);
+    // std::locale::global(loc); // 恢复全局locale
 
-    ofs << str(strTitle);
+    ofs << str(title);
 }
 
 } // namespace sindy
